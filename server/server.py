@@ -1,15 +1,43 @@
 import socket
+import threading
+
+host = "127.0.0.1"
+port = 14169
 
 s = socket.socket()
+s.bind((host, port))
+s.listen()
 
-s.bind(("localhost", 4169))
-s.listen(1)
+clients: list[socket.socket] = []
+nicknames: dict[socket.socket, str] = {}
 
-while True:
-    c_socket, c_addr = s.accept()
-    print(f"{c_addr} has connected")
-    x = c_socket.recv(1024)
-    print(x)
-    c_socket.close()
-    s.close()
+# def broadcast():
+
+
+def handle(client: socket.socket):
+    while True:
+        try:
+            message = client.recv(1024)
+            # do something with the message
+        except:
+            index = clients.index(client)
+            nickname = nicknames[client]
+            clients.remove(client)
+            nicknames.pop(client)
+            print(f"{nickname} has disconnected.")
+            client.close()
+            break
+
+
+def receive():
+    while True:
+        client, (addr, port) = s.accept()
+        print(f"{addr}:{port} has connected.")
+        nicknames[client] = "Un humain"
+
+        client.send("Vous êtes connecté au service des Communications Electroniques de la France. Bienvenue.".encode())
+        thread = threading.Thread(target=handle, args=(client,))
+        thread.start()
+
+receive()
 
