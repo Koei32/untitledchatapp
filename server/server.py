@@ -32,7 +32,8 @@ def handle(client: socket.socket):
 def receive():
     while True:
         client, (addr, port) = s.accept()
-        print(f"{addr}:{port} has connected.")
+        nick = client.recv(1024).decode()
+        print(f"{nick} has connected ({addr}:{port}).")
         nicknames[client] = "Un humain"
 
         client.send("Vous êtes connecté au service des Communications Electroniques de la France. Bienvenue.".encode())
