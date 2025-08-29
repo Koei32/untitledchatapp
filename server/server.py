@@ -1,6 +1,7 @@
 import socket
 import threading
 import pickle
+import sqlite3
 
 
 host = "koei.hackclub.app"
@@ -14,7 +15,6 @@ clients: list[socket.socket] = []
 nicknames: dict[socket.socket, str] = {}
 
 # def broadcast():
-import sqlite3
 
 user_db = sqlite3.connect("user.db")
 cur = user_db.cursor()
@@ -24,6 +24,7 @@ def register_user(client: socket.socket):
     user, pwd = pickle.loads(client.recv(1024))
     print(f"received credentials {user}-{pwd}")
     cur.execute(f'insert into users values("{user}", "{pwd}")')
+    user_db.commit()
     return user
 
 def handle(client: socket.socket, user: str):
