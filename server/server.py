@@ -18,7 +18,6 @@ import sqlite3
 
 user_db = sqlite3.connect("user.db")
 cur = user_db.cursor()
-
 def register_user(client: socket.socket):
     print("sending OK")
     client.send("OK".encode())
@@ -33,7 +32,7 @@ def handle(client: socket.socket, user: str):
     while True:
         try:
             message = client.recv(1024)
-            # do something with the message
+            print(message)
         except KeyboardInterrupt:
             client.close()
             return
