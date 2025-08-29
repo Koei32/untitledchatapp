@@ -3,7 +3,7 @@ import threading
 import pickle
 
 
-host = "127.0.0.1"
+host = "koei.hackclub.app"
 port = 14169
 
 s = socket.socket()
