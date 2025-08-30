@@ -22,10 +22,31 @@ def register_user(client: socket.socket):
     print("sending OK")
     client.send("OK".encode())
     user, pwd = pickle.loads(client.recv(1024))
+    #check cred validity
     print(f"received credentials {user}-{pwd}")
     cur.execute(f'insert into users values("{user}", "{pwd}")')
     user_db.commit()
     return user
+
+def login_user(client: socket.socket):
+    print("sending OK")
+    client.send("OK".encode())
+    user, pwd = pickle.loads(client.recv(1024))
+    #check cred validity
+    print(f"received credentials {user}-{pwd}")
+    db_entry = cur.execute(f"select * from users where user='{user}'").fetchall()
+    if len(db_entry) == 0:
+        print(f"user '{user}' doesnt exist.")
+        return
+    
+    if pwd != db_entry[0][1]:
+        print(f"invalid password (correct pwd is{db_entry[0][1]})")
+        return
+    
+    print(f"{user} has logged in.")
+        
+    return user
+
 
 def handle(client: socket.socket, user: str):
     print(f"{user} has connected ({client.getpeername()}).")
@@ -55,8 +76,13 @@ def receive():
         if greet == "REG":
             print("client has requested to register")
             user = register_user(client)
-        thread = threading.Thread(target=handle, args=(client, user))
-        thread.start()
+            thread = threading.Thread(target=handle, args=(client, user))
+            thread.start()
+        elif greet == "LOG":
+            print("client has requested to log in")
+            user = login_user(client)
+            thread = threading.Thread(target=handle, args=(client, user))
+            thread.start()
     
 receive()
 
