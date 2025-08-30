@@ -64,8 +64,7 @@ def handle(client: socket.socket, user: str):
             nicknames.pop(client)
             print(f"{nickname} has disconnected.")
             client.close()
-            s.close()
-            break
+            return
 
 
 def receive():
@@ -76,11 +75,15 @@ def receive():
         if greet == "REG":
             print("client has requested to register")
             user = register_user(client)
+            if user is None:
+                break
             thread = threading.Thread(target=handle, args=(client, user))
             thread.start()
         elif greet == "LOG":
             print("client has requested to log in")
             user = login_user(client)
+            if user is None:
+                break
             thread = threading.Thread(target=handle, args=(client, user))
             thread.start()
     
