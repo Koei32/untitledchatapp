@@ -58,10 +58,10 @@ def handle(client: socket.socket, user: str):
                 raise ValueError
             print(message, "its me")
         except:
-            nickname = nicknames[client]
+            # nickname = nicknames[client]
             clients.remove(client)
-            nicknames.pop(client)
-            print(f"{nickname} has disconnected.")
+            # nicknames.pop(client)
+            print(f"{user} has disconnected.")
             client.close()
             return
 
