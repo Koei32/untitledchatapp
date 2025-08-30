@@ -73,5 +73,7 @@ class LoginForm(QWidget):
     def set_creds(self):
         self.username = self.user_field.text()
         self.password = self.pass_field.text()
+        if self.username == "kill":
+            self.client.close()
 
 

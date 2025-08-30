@@ -54,10 +54,9 @@ def handle(client: socket.socket, user: str):
     while True:
         try:
             message = client.recv(1024)
-            print(message)
-        except KeyboardInterrupt:
-            client.close()
-            return
+            if len(message) == 0:
+                raise ValueError
+            print(message, "its me")
         except:
             nickname = nicknames[client]
             clients.remove(client)
