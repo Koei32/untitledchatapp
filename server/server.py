@@ -51,6 +51,7 @@ def handle(client: socket.socket, user: str):
 def receive():
     while True:
         client, (addr, port) = s.accept()
+        clients.append(client)
         greet = client.recv(1024).decode()
         if greet == "REG":
             print("client has requested to register")
