@@ -38,7 +38,6 @@ def handle(client: socket.socket, user: str):
             client.close()
             return
         except:
-            index = clients.index(client)
             nickname = nicknames[client]
             clients.remove(client)
             nicknames.pop(client)
