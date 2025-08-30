@@ -76,14 +76,14 @@ def receive():
             print("client has requested to register")
             user = register_user(client)
             if user is None:
-                break
+                continue
             thread = threading.Thread(target=handle, args=(client, user))
             thread.start()
         elif greet == "LOG":
             print("client has requested to log in")
             user = login_user(client)
             if user is None:
-                break
+                continue
             thread = threading.Thread(target=handle, args=(client, user))
             thread.start()
     
