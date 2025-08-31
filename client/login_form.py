@@ -13,6 +13,7 @@ class LoginForm(QWidget):
     def __init__(self, client: socket.socket):
         super().__init__()
         self.c = client
+        self.c.connect((host, port))
 
         self.hero_image = QLabel(self)
         hero = QPixmap("./images/hero.png").scaled(230, 1000, Qt.AspectRatioMode.KeepAspectRatio)
@@ -44,8 +45,6 @@ class LoginForm(QWidget):
         self.setLayout(layout)
 
     def send_reg_msg(self):
-        if self.c is None:
-            self.c.connect((host, port))
         print("sending REG to server")
         self.c.send("REG".encode())
         self.submit_button.setDisabled(True)
@@ -59,8 +58,6 @@ class LoginForm(QWidget):
             return False
     
     def send_login_msg(self):
-        if self.c is None:
-            self.c.connect((host, port))
         print("sending LOG to server")
         self.c.send("LOG".encode())
         self.submit_button.setEnabled(False)
