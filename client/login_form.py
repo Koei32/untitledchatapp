@@ -67,14 +67,14 @@ class LoginForm(QWidget):
             self.c.send(pickle.dumps((self.username, self.password)))
             auth = self.c.recv(1024).decode()
             #login
-        if auth == "INV_USR":
-            print("user doesnt exist on server")
-            self.submit_button.setEnabled(True)
-        elif auth == "INV_PWD":
-            print("password is wrong for user")
-            self.submit_button.setEnabled(True)
-        else:
-            return False
+            if auth == "INV_USR":
+                print("user doesnt exist on server")
+                self.submit_button.setEnabled(True)
+            elif auth == "INV_PWD":
+                print("password is wrong for user")
+                self.submit_button.setEnabled(True)
+            else:
+                return False
     
     def check_password_validity(self) -> int:
         print(self.username, self.password)
