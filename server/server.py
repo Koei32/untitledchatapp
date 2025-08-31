@@ -53,30 +53,33 @@ def login_user(client: socket.socket):
 
 
 def handle_connection(client: socket.socket):
-    #acknowledge the connection
-    client_ip = client.getpeername()
-    print(f"{client_ip} has connected.")
-    client.send("youve connected to the host".encode())
+    try:
+        #acknowledge the connection
+        client_ip = client.getpeername()
+        print(f"{client_ip} has connected.")
+        client.send("youve connected to the host".encode())
+        
+        #receive greet and perform reg/log
+        greet = client.recv(1024).decode()
+        if greet == "REG":
+            print(f"{client_ip} has requested to register")
+            user = register_user(client)
+            if user is None:
+                client.close()
+                return
+        elif greet == "LOG":
+            print("client has requested to log in")
+            user = login_user(client)
+            if user is None:
+                client.close()
+                return
+        else:
+            print("client has sent an invalid greet")
+            client.close()
+            return
+    except:
+        print(f"{client_ip} has disconnected.")
     
-    #receive greet and perform reg/log
-    greet = client.recv(1024).decode()
-    if greet == "REG":
-        print(f"{client_ip} has requested to register")
-        user = register_user(client)
-        if user is None:
-            client.close()
-            return
-    elif greet == "LOG":
-        print("client has requested to log in")
-        user = login_user(client)
-        if user is None:
-            client.close()
-            return
-    else:
-        print("client has sent an invalid greet")
-        client.close()
-        return
-
     while True:
         try:
             message = client.recv(1024)
@@ -98,7 +101,7 @@ def receive():
         clients.append(client)
         thread = threading.Thread(target=handle_connection, args=(client,))
         thread.start()
-        
-    
+
+
 receive()
 

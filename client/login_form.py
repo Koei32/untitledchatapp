@@ -42,6 +42,7 @@ class LoginForm(QWidget):
         layout.addWidget(self.user_field)
         layout.addWidget(self.pass_field)
         layout.addWidget(self.submit_button)
+        layout.setSpacing(7)
         self.setLayout(layout)
 
     def send_reg_msg(self):
