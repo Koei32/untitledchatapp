@@ -36,14 +36,17 @@ def login_user(client: socket.socket):
     #check cred validity
     print(f"received credentials {user}-{pwd}")
     db_entry = cur.execute(f"select * from users where user='{user}'").fetchall()
+
     if len(db_entry) == 0:
         print(f"user '{user}' doesnt exist.")
         client.send("INV_USR".encode())
+        client.close()
         return
     
     if pwd != db_entry[0][1]:
         print(f"invalid password (correct pwd is{db_entry[0][1]})")
         client.send("INV_PWD".encode())
+        client.close()
         return
     
     print(f"{user} has logged in.")
