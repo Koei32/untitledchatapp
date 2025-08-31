@@ -1,4 +1,6 @@
-from PySide6.QtWidgets import QWidget, QPushButton, QCheckBox, QLineEdit, QVBoxLayout
+from PySide6.QtWidgets import QWidget, QPushButton, QCheckBox, QLineEdit, QVBoxLayout, QLabel
+from PySide6.QtGui import QPixmap
+from PySide6.QtCore import Qt
 import pickle
 import socket
 from util_functions import VALID_CHARS
@@ -10,7 +12,15 @@ port = 14169
 class LoginForm(QWidget):
     def __init__(self, client: socket.socket):
         super().__init__()
-        self.client = client
+        self.c = client
+
+        self.hero_image = QLabel(self)
+        hero = QPixmap("./images/hero.png").scaled(230, 1000, Qt.AspectRatioMode.KeepAspectRatio)
+        self.hero_image.setPixmap(hero)
+        # self.hero_image.setScaledContents(True)
+
+        # self.resize(hero.width(), hero.height())
+
         self.user_field = QLineEdit(placeholderText="Username")
         self.user_field.textChanged.connect(self.set_creds)
 
@@ -24,39 +34,39 @@ class LoginForm(QWidget):
 
         self.submit_button = QPushButton("Login")
         self.submit_button.setFixedWidth(100)
-        # self.submit_button.clicked.connect(self.send_reg_msg)
         self.submit_button.clicked.connect(self.send_login_msg)
 
         layout = QVBoxLayout()
+        layout.addWidget(self.hero_image)
         layout.addWidget(self.user_field)
         layout.addWidget(self.pass_field)
         layout.addWidget(self.submit_button)
         self.setLayout(layout)
 
     def send_reg_msg(self):
-        self.client.connect((host, port))
+        self.c.connect((host, port))
         print("sending REG to server")
-        self.client.send("REG".encode())
+        self.c.send("REG".encode())
         self.submit_button.setDisabled(True)
-        response = self.client.recv(1024).decode()
+        response = self.c.recv(1024).decode()
         if response == "OK":
             print("server responded OK, sending user and pwd")
-            self.client.send(pickle.dumps((self.username, self.password)))
-            print(self.client.recv(1024).decode())
+            self.c.send(pickle.dumps((self.username, self.password)))
+            print(self.c.recv(1024).decode())
             #login
         else:
             return False
     
     def send_login_msg(self):
-        self.client.connect((host, port))
+        self.c.connect((host, port))
         print("sending LOG to server")
-        self.client.send("LOG".encode())
+        self.c.send("LOG".encode())
         self.submit_button.setDisabled(True)
-        response = self.client.recv(1024).decode()
+        response = self.c.recv(1024).decode()
         if response == "OK":
             print("server responded OK, sending user and pwd")
-            self.client.send(pickle.dumps((self.username, self.password)))
-            print(self.client.recv(1024).decode())
+            self.c.send(pickle.dumps((self.username, self.password)))
+            print(self.c.recv(1024).decode())
             #login
         else:
             return False
@@ -74,6 +84,6 @@ class LoginForm(QWidget):
         self.username = self.user_field.text()
         self.password = self.pass_field.text()
         if self.username == "kill":
-            self.client.close()
+            self.c.close()
 
 

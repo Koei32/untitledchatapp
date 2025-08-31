@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QApplication, QMainWindow
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QSizePolicy
 from PySide6.QtGui import QFont
 import socket
 import pickle
@@ -28,8 +28,8 @@ app = QApplication(sys.argv)
 app.setFont(font)
 window = QMainWindow()
 window.setWindowTitle("Untitled Chat App")
+window.setFixedSize(250, 400)
 login = LoginForm(c)
-login.setFixedHeight(260)
 window.setCentralWidget(login)
 window.show()
 
