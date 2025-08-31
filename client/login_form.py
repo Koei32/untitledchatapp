@@ -61,13 +61,19 @@ class LoginForm(QWidget):
         self.c.connect((host, port))
         print("sending LOG to server")
         self.c.send("LOG".encode())
-        self.submit_button.setDisabled(True)
+        self.submit_button.setEnabled(False)
         response = self.c.recv(1024).decode()
         if response == "OK":
             print("server responded OK, sending user and pwd")
             self.c.send(pickle.dumps((self.username, self.password)))
             print(self.c.recv(1024).decode())
             #login
+        elif response == "INV_USR":
+            print("user doesnt exist on server")
+            self.submit_button.setEnabled(True)
+        elif response == "INV_PWD":
+            print("password is wrong for user")
+            self.submit_button.setEnabled(True)
         else:
             return False
     

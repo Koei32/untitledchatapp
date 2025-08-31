@@ -2,7 +2,8 @@ import socket
 import threading
 import pickle
 import sqlite3
-
+import secrets
+import hashlib
 
 host = "koei.hackclub.app"
 port = 14169
@@ -37,10 +38,12 @@ def login_user(client: socket.socket):
     db_entry = cur.execute(f"select * from users where user='{user}'").fetchall()
     if len(db_entry) == 0:
         print(f"user '{user}' doesnt exist.")
+        client.send("INV_USR".encode())
         return
     
     if pwd != db_entry[0][1]:
         print(f"invalid password (correct pwd is{db_entry[0][1]})")
+        client.send("INV_PWD".encode())
         return
     
     print(f"{user} has logged in.")
