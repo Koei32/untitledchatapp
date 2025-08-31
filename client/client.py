@@ -6,7 +6,7 @@ import sys
 
 from login_form import LoginForm
 
-font = QFont("Trebuchet", 10)
+font = QFont("Trebuchet MS", 10)
 font.setStyleStrategy(QFont.StyleStrategy.NoAntialias)
 font.setBold(True)
 
