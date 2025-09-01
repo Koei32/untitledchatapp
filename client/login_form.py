@@ -16,7 +16,7 @@ class LoginForm(QWidget):
         self.c.connect((host, port))
 
         self.hero_image = QLabel(self)
-        hero = QPixmap("./images/hero.png").scaled(230, 1000, Qt.AspectRatioMode.KeepAspectRatio)
+        hero = QPixmap("./images/hero.png").scaled(230, 300, Qt.AspectRatioMode.KeepAspectRatio)
         self.hero_image.setPixmap(hero)
         # self.hero_image.setScaledContents(True)
 
@@ -39,9 +39,13 @@ class LoginForm(QWidget):
 
         layout = QVBoxLayout()
         layout.addWidget(self.hero_image)
-        layout.addWidget(self.user_field)
-        layout.addWidget(self.pass_field)
-        layout.addWidget(self.submit_button)
+        fields = QWidget()
+        fields_layout = QVBoxLayout()
+        fields_layout.addWidget(self.user_field)
+        fields_layout.addWidget(self.pass_field)
+        fields_layout.addWidget(self.submit_button)
+        fields.setLayout(fields_layout)
+        layout.addWidget(fields)
         layout.setSpacing(7)
         self.setLayout(layout)
 

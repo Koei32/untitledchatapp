@@ -8,7 +8,7 @@ from login_form import LoginForm
 
 font = QFont("Trebuchet MS", 10)
 font.setStyleStrategy(QFont.StyleStrategy.NoAntialias)
-font.setBold(True)
+# font.setBold(True)
 
 host = "koei.hackclub.app"
 port = 14169
@@ -28,7 +28,7 @@ app = QApplication(sys.argv)
 app.setFont(font)
 window = QMainWindow()
 window.setWindowTitle("Untitled Chat App")
-window.setFixedSize(250, 400)
+window.setFixedSize(250, 350)
 login = LoginForm(c)
 window.setCentralWidget(login)
 window.show()

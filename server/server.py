@@ -32,7 +32,8 @@ def register_user(client: socket.socket):
 def login_user(client: socket.socket):
     print("sending OK")
     client.send("OK".encode())
-    user, pwd = pickle.loads(client.recv(1024))
+    response = client.recv(1024)
+    user, pwd = pickle.loads(response)
     #check cred validity
     print(f"received credentials {user}-{pwd}")
     db_entry = cur.execute(f"select * from users where user='{user}'").fetchall()
