@@ -20,7 +20,6 @@ nicknames: dict[socket.socket, str] = {}
 user_db = sqlite3.connect("user.db")
 cur = user_db.cursor()
 def register_user(client: socket.socket):
-    print("sending OK")
     client.send("OK".encode())
     user, pwd = pickle.loads(client.recv(1024))
     #check cred validity
@@ -30,8 +29,8 @@ def register_user(client: socket.socket):
     return user
 
 def login_user(client: socket.socket):
-    print("sending OK")
     client.send("OK".encode())
+    print("sent OK, waiting for response")
     response = client.recv(1024)
     user, pwd = pickle.loads(response)
     #check cred validity
@@ -58,7 +57,6 @@ def handle_connection(client: socket.socket):
         #acknowledge the connection
         client_ip = client.getpeername()
         print(f"{client_ip} has connected.")
-        client.send("youve connected to the host".encode())
         
         #receive greet and perform reg/log
         greet = client.recv(1024).decode()

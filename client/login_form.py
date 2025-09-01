@@ -63,9 +63,11 @@ class LoginForm(QWidget):
             return False
     
     def send_login_msg(self):
-        print("sending LOG to server")
         self.c.send("LOG".encode())
+        print("sent LOG, waiting for OK")
+        
         self.submit_button.setEnabled(False)
+
         response = self.c.recv(1024).decode()
         if response == "OK":
             print("server responded OK, sending user and pwd")
