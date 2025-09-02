@@ -10,9 +10,8 @@ font = QFont("Trebuchet MS", 10)
 font.setStyleStrategy(QFont.StyleStrategy.NoAntialias)
 # font.setBold(True)
 
-host = "koei.hackclub.app"
+host = "localhost"
 port = 14169
-c = socket.socket()
 
 
 #
@@ -25,11 +24,11 @@ c = socket.socket()
 
 
 app = QApplication(sys.argv)
-app.setFont(font)
+# app.setFont(font)
 window = QMainWindow()
 window.setWindowTitle("Untitled Chat App")
-window.setFixedSize(250, 350)
-login = LoginForm(c)
+window.setFixedSize(280, 380)
+login = LoginForm()
 window.setCentralWidget(login)
 window.show()
 

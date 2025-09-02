@@ -2,24 +2,21 @@ import socket
 import threading
 import pickle
 import sqlite3
-import secrets
-import hashlib
 
-host = "koei.hackclub.app"
-port = 14169
+HOST = "localhost"
+PORT = 14169
 
 s = socket.socket()
-s.bind((host, port))
+s.bind((HOST, PORT))
 s.listen()
 
 clients: list[socket.socket] = []
 nicknames: dict[socket.socket, str] = {}
 
-# def broadcast():
 
-user_db = sqlite3.connect("user.db")
-cur = user_db.cursor()
 def register_user(client: socket.socket):
+    user_db = sqlite3.connect("user.db")
+    cur = user_db.cursor()
     client.send("OK".encode())
     user, pwd = pickle.loads(client.recv(1024))
     #check cred validity
@@ -29,12 +26,18 @@ def register_user(client: socket.socket):
     return user
 
 def login_user(client: socket.socket):
+    user_db = sqlite3.connect("user.db")
+    cur = user_db.cursor()
+
     client.send("OK".encode())
     print("sent OK, waiting for response")
     response = client.recv(1024)
     user, pwd = pickle.loads(response)
+
     #check cred validity
+
     print(f"received credentials {user}-{pwd}")
+
     db_entry = cur.execute(f"select * from users where user='{user}'").fetchall()
 
     if len(db_entry) == 0:
@@ -53,31 +56,29 @@ def login_user(client: socket.socket):
 
 
 def handle_connection(client: socket.socket):
-    try:
-        #acknowledge the connection
-        client_ip = client.getpeername()
-        print(f"{client_ip} has connected.")
-        
-        #receive greet and perform reg/log
-        greet = client.recv(1024).decode()
-        if greet == "REG":
-            print(f"{client_ip} has requested to register")
-            user = register_user(client)
-            if user is None:
-                client.close()
-                return
-        elif greet == "LOG":
-            print("client has requested to log in")
-            user = login_user(client)
-            if user is None:
-                client.close()
-                return
-        else:
-            print("client has sent an invalid greet")
+    
+    #acknowledge the connection
+    client_ip = client.getpeername()
+    print(f"{client_ip} has connected.")
+    
+    #receive greet and perform reg/log
+    greet = client.recv(1024).decode()
+    if greet == "REG":
+        print(f"{client_ip} has requested to register")
+        user = register_user(client)
+        if user is None:
             client.close()
             return
-    except:
-        print(f"{client_ip} has disconnected.")
+    elif greet == "LOG":
+        print("client has requested to log in")
+        user = login_user(client)
+        if user is None:
+            client.close()
+            return
+    else:
+        print("client has sent an invalid greet")
+        client.close()
+        return
     
     while True:
         try:
@@ -95,6 +96,7 @@ def handle_connection(client: socket.socket):
 
 
 def receive():
+    print(f"Server is listening on {HOST}:{PORT}")
     while True:
         client, (addr, port) = s.accept()
         clients.append(client)
