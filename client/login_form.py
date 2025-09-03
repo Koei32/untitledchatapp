@@ -43,6 +43,7 @@ class LoginForm(QWidget):
             print("server responded OK, sending user and pwd")
             self.c.send(pickle.dumps((self.username, self.password)))
             auth = self.c.recv(1024).decode()
+            print(auth)
             #login
             if auth == "INV_USR":
                 print("user doesnt exist on server")

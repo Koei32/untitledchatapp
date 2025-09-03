@@ -50,6 +50,7 @@ def login_user(client: socket.socket):
         client.send("INV_PWD".encode())
         return
     
+    client.send("SUCCESS".encode())
     print(f"{user} has logged in.")
         
     return user
