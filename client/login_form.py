@@ -21,8 +21,7 @@ class LoginForm(QWidget):
         self.c.connect((host, port))
         self.c.send("REG".encode())
         print("sending REG to server")
-        self.c.send("REG".encode())
-        self.submit_button.setDisabled(True)
+        self.login_button.setDisabled(True)
         response = self.c.recv(1024).decode()
         if response == "OK":
             print("server responded OK, sending user and pwd")
@@ -31,19 +30,19 @@ class LoginForm(QWidget):
             if auth == "USER_EXISTS":
                 print("user already exists on the server")
                 self.c.close()
-                self.submit_button.setEnabled(True)
+                self.login_button.setEnabled(True)
             else:
                 print("We have successfully logged into the server")
         else:
             return False
-    
+
     def send_login_msg(self):
         self.c = socket.socket()
         self.c.connect((host, port))
         self.c.send("LOG".encode())
         print("sent LOG, waiting for OK")
         
-        self.submit_button.setEnabled(False)
+        self.login_button.setEnabled(False)
 
         response = self.c.recv(1024).decode()
         if response == "OK":
@@ -55,11 +54,11 @@ class LoginForm(QWidget):
             if auth == "INV_USR":
                 print("user doesnt exist on server")
                 self.c.close()
-                self.submit_button.setEnabled(True)
+                self.login_button.setEnabled(True)
             elif auth == "INV_PWD":
                 print("password is wrong for user")
                 self.c.close()
-                self.submit_button.setEnabled(True)
+                self.login_button.setEnabled(True)
             else:
                 print("We have successfully logged into the server")
     
@@ -131,14 +130,24 @@ class LoginForm(QWidget):
         self.pwd_group.setLayout(password_lo)
 
         # LOGIN BUTTON
-        self.submit_button = QPushButton()
+        self.login_button = QPushButton()
         sign_on = QPixmap("./images/sign_on.png").scaled(50, 50, Qt.AspectRatioMode.KeepAspectRatio)
-        self.submit_button.setFixedWidth(50)
-        self.submit_button.setFixedHeight(50)
-        self.submit_button.setFlat(True)
-        self.submit_button.clicked.connect(self.send_login_msg)
-        self.submit_button.setIcon(sign_on)
-        self.submit_button.setIconSize(QSize(50, 50))
+        self.login_button.setFixedWidth(50)
+        self.login_button.setFixedHeight(50)
+        self.login_button.setFlat(True)
+        self.login_button.clicked.connect(self.send_login_msg)
+        self.login_button.setIcon(sign_on)
+        self.login_button.setIconSize(QSize(50, 50))
+
+        # REGISTER BUTTON
+        # sign_on = QPixmap("./images/sign_on.png").scaled(50, 50, Qt.AspectRatioMode.KeepAspectRatio)
+        self.register_button = QPushButton("Register")
+        self.register_button.setFixedWidth(50)
+        self.register_button.setFixedHeight(50)
+        self.register_button.setFlat(True)
+        self.register_button.clicked.connect(self.send_reg_msg)
+        # self.register_button.setIcon(sign_on)
+        self.register_button.setIconSize(QSize(50, 50))
 
         # SETTING LAYOUTS
         layout = QVBoxLayout()
@@ -151,11 +160,22 @@ class LoginForm(QWidget):
         fields_layout.addSpacing(5)
         fields_layout.addWidget(self.invalid_creds)
         fields_layout.addStretch(1)
-        fields_layout.addWidget(self.submit_button) 
+
+        buttons = QWidget()
+        buttons_layout = QHBoxLayout()
+        buttons_layout.setContentsMargins(0, 0, 0, 0)
+        buttons_layout.addWidget(self.register_button)
+        buttons_layout.addWidget(self.login_button)
+        buttons.setLayout(buttons_layout)
+
+        fields_layout.addWidget(buttons)
         fields_layout.setSpacing(0)
         fields.setLayout(fields_layout)
         layout.addWidget(fields)
         layout.setSpacing(5)
         self.setLayout(layout)
 
+    def disable_ui_interaction(self):
+        self.login_button.setEnabled(False)
+        self.register_button.setEnabled(False)
 

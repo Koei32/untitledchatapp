@@ -29,7 +29,7 @@ def register_user(client: socket.socket):
         client.send("USER_EXISTS".encode())
         print(f"user {user} already exists.")
         return
-
+    client.send("SUCCESS".encode())
     cur.execute(f'insert into users values("{user}", "{pwd}")')
 
     user_db.commit()
