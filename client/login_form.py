@@ -17,6 +17,9 @@ class LoginForm(QWidget):
         self.init_ui()
 
     def send_reg_msg(self):
+        self.c = socket.socket()
+        self.c.connect((host, port))
+        self.c.send("REG".encode())
         print("sending REG to server")
         self.c.send("REG".encode())
         self.submit_button.setDisabled(True)
@@ -24,13 +27,17 @@ class LoginForm(QWidget):
         if response == "OK":
             print("server responded OK, sending user and pwd")
             self.c.send(pickle.dumps((self.username, self.password)))
-            print(self.c.recv(1024).decode())
-            #login
+            auth = self.c.recv(1024).decode()
+            if auth == "USER_EXISTS":
+                print("user already exists on the server")
+                self.c.close()
+                self.submit_button.setEnabled(True)
+            else:
+                print("We have successfully logged into the server")
         else:
             return False
     
     def send_login_msg(self):
-        print(self.user_field.width())
         self.c = socket.socket()
         self.c.connect((host, port))
         self.c.send("LOG".encode())

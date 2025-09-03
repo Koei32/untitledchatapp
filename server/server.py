@@ -17,11 +17,21 @@ nicknames: dict[socket.socket, str] = {}
 def register_user(client: socket.socket):
     user_db = sqlite3.connect("user.db")
     cur = user_db.cursor()
+
     client.send("OK".encode())
     user, pwd = pickle.loads(client.recv(1024))
-    #check cred validity
     print(f"received credentials {user}-{pwd}")
+
+    #check cred validity
+
+    db_entry = cur.execute(f"select * from users where user='{user}'").fetchall()
+    if len(db_entry) != 0:
+        client.send("USER_EXISTS".encode())
+        print(f"user {user} already exists.")
+        return
+
     cur.execute(f'insert into users values("{user}", "{pwd}")')
+
     user_db.commit()
     return user
 
@@ -46,7 +56,7 @@ def login_user(client: socket.socket):
         return
     
     if pwd != db_entry[0][1]:
-        print(f"invalid password (correct pwd is{db_entry[0][1]})")
+        print(f"invalid password (correct pwd is {db_entry[0][1]})")
         client.send("INV_PWD".encode())
         return
     
