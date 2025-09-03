@@ -33,7 +33,8 @@ class LoginForm(QMainWindow):
                 self.c.close()
                 self.login_button.setEnabled(True)
             else:
-                print("We have successfully logged into the server")
+                self.set_and_show_info("Successfully created account!", "green")
+                print("Successfully created account!")
         else:
             return False
 
@@ -67,7 +68,6 @@ class LoginForm(QMainWindow):
                 self.set_and_show_info("Logged in!", "green")
     
     def check_password_validity(self) -> int:
-        print(self.username, self.password)
         if len(self.password) < 8:
             return 1
         for chr in self.password:
