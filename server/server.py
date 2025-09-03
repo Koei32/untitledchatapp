@@ -3,7 +3,7 @@ import threading
 import pickle
 import sqlite3
 
-HOST = "localhost"
+HOST = "koei.hackclub.app"
 PORT = 14169
 
 s = socket.socket()

@@ -1,14 +1,15 @@
 from PySide6.QtWidgets import QWidget, QPushButton, QCheckBox, QLineEdit, QVBoxLayout, QHBoxLayout, QLabel, QSizePolicy
 from PySide6.QtGui import QPixmap
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QSize
 import pickle
 import socket
 from fonts import warning_font, default_font
 from util_functions import VALID_CHARS
+from config import ConfigManager
 
-
-host = "localhost"
-port = 14169
+cfgmgr = ConfigManager()
+host = cfgmgr.host
+port = cfgmgr.port
 
 class LoginForm(QWidget):
     def __init__(self):
@@ -129,6 +130,7 @@ class LoginForm(QWidget):
         self.submit_button.setFlat(True)
         self.submit_button.clicked.connect(self.send_login_msg)
         self.submit_button.setIcon(sign_on)
+        self.submit_button.setIconSize(QSize(50, 50))
 
         # SETTING LAYOUTS
         layout = QVBoxLayout()
@@ -141,7 +143,7 @@ class LoginForm(QWidget):
         fields_layout.addSpacing(5)
         fields_layout.addWidget(self.invalid_creds)
         fields_layout.addStretch(1)
-        fields_layout.addWidget(self.submit_button)
+        fields_layout.addWidget(self.submit_button) 
         fields_layout.setSpacing(0)
         fields.setLayout(fields_layout)
         layout.addWidget(fields)

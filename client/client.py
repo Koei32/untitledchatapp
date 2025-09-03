@@ -1,7 +1,5 @@
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QSizePolicy
+from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtGui import QFont
-import socket
-import pickle
 import sys
 
 from login_form import LoginForm
@@ -9,9 +7,6 @@ from login_form import LoginForm
 font = QFont("Trebuchet MS", 10)
 font.setStyleStrategy(QFont.StyleStrategy.NoAntialias)
 # font.setBold(True)
-
-host = "localhost"
-port = 14169
 
 
 #
