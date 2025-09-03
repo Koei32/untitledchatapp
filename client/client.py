@@ -1,12 +1,9 @@
-from PySide6.QtWidgets import QApplication, QMainWindow
+from PySide6.QtWidgets import QApplication, QStyleFactory
 from PySide6.QtGui import QFont
 import sys
-
+from config import ConfigManager
 from login_form import LoginForm
 
-font = QFont("Trebuchet MS", 10)
-font.setStyleStrategy(QFont.StyleStrategy.NoAntialias)
-# font.setBold(True)
 
 
 #
@@ -17,15 +14,16 @@ font.setStyleStrategy(QFont.StyleStrategy.NoAntialias)
 #
 #
 
+cfg_mgr = ConfigManager()
+
+with open(cfg_mgr.style_path + "client.qss") as qss:
+    style = qss.read()
 
 app = QApplication(sys.argv)
+app.setStyleSheet(style)
 # app.setFont(font)
-window = QMainWindow()
-window.setWindowTitle("Untitled Chat App")
-window.setFixedSize(280, 380)
-login = LoginForm()
-window.setCentralWidget(login)
-window.show()
+login_window = LoginForm()
+login_window.show()
 
 
 app.exec()

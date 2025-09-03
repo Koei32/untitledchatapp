@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QPushButton, QCheckBox, QLineEdit, QVBoxLayout, QHBoxLayout, QLabel, QSizePolicy
+from PySide6.QtWidgets import QWidget, QPushButton, QCheckBox, QLineEdit, QVBoxLayout, QHBoxLayout, QLabel, QSizePolicy, QMainWindow
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt, QSize
 import pickle
@@ -11,7 +11,7 @@ cfgmgr = ConfigManager()
 host = cfgmgr.host
 port = cfgmgr.port
 
-class LoginForm(QWidget):
+class LoginForm(QMainWindow):
     def __init__(self):
         super().__init__()
         self.init_ui()
@@ -21,7 +21,7 @@ class LoginForm(QWidget):
         self.c.connect((host, port))
         self.c.send("REG".encode())
         print("sending REG to server")
-        self.login_button.setDisabled(True)
+        self.disable_ui_interaction()
         response = self.c.recv(1024).decode()
         if response == "OK":
             print("server responded OK, sending user and pwd")
@@ -29,6 +29,7 @@ class LoginForm(QWidget):
             auth = self.c.recv(1024).decode()
             if auth == "USER_EXISTS":
                 print("user already exists on the server")
+                self.set_and_show_info("User already exists", "red")
                 self.c.close()
                 self.login_button.setEnabled(True)
             else:
@@ -42,7 +43,7 @@ class LoginForm(QWidget):
         self.c.send("LOG".encode())
         print("sent LOG, waiting for OK")
         
-        self.login_button.setEnabled(False)
+        self.disable_ui_interaction()
 
         response = self.c.recv(1024).decode()
         if response == "OK":
@@ -53,14 +54,17 @@ class LoginForm(QWidget):
             #login
             if auth == "INV_USR":
                 print("user doesnt exist on server")
+                self.set_and_show_info("Invalid user or password", "red")
                 self.c.close()
                 self.login_button.setEnabled(True)
             elif auth == "INV_PWD":
                 print("password is wrong for user")
+                self.set_and_show_info("Invalid user or password", "red")
                 self.c.close()
                 self.login_button.setEnabled(True)
             else:
                 print("We have successfully logged into the server")
+                self.set_and_show_info("Logged in!", "green")
     
     def check_password_validity(self) -> int:
         print(self.username, self.password)
@@ -74,15 +78,16 @@ class LoginForm(QWidget):
     def set_creds(self):
         self.username = self.user_field.text()
         self.password = self.pass_field.text()
+        self.invalid_creds.setVisible(False)
         if self.username == "kill":
             self.c.close()
     
     def init_ui(self):
-        
         # SPLASH IMAGE
         self.hero_image = QLabel(self)
         hero = QPixmap("./images/hero.png").scaled(260, 300, Qt.AspectRatioMode.KeepAspectRatio)
         self.hero_image.setPixmap(hero)
+
 
         # WARNINGS
         self.invalid_creds = QLabel("Username or password is invalid!")
@@ -173,7 +178,16 @@ class LoginForm(QWidget):
         fields.setLayout(fields_layout)
         layout.addWidget(fields)
         layout.setSpacing(5)
-        self.setLayout(layout)
+        wrapper = QWidget()
+        wrapper.setLayout(layout)
+        self.setCentralWidget(wrapper)
+        self.setWindowTitle("Untitled Chat App")
+        self.setFixedSize(280, 380)
+
+    def set_and_show_info(self, message: str, color: str):
+        self.invalid_creds.setText(message)
+        self.invalid_creds.setStyleSheet(f"color: {color}")
+        self.invalid_creds.setVisible(True)
 
     def disable_ui_interaction(self):
         self.login_button.setEnabled(False)

@@ -1,10 +1,10 @@
 from PySide6.QtGui import QFont
 
 
-warning_font = QFont("Tahoma", pointSize=10, weight=900)
+warning_font = QFont("Trebuchet MS", pointSize=10, weight=900)
 
-default_font = QFont("Trebuchet MS", pointSize=10)
+default_font = QFont("Tahoma", pointSize=10)
 
-warning_font.setStyleStrategy(QFont.StyleStrategy.NoAntialias)
-default_font.setStyleStrategy(QFont.StyleStrategy.NoAntialias)
+# warning_font.setStyleStrategy(QFont.StyleStrategy.NoAntialias)
+# default_font.setStyleStrategy(QFont.StyleStrategy.PreferBitmap)
 
