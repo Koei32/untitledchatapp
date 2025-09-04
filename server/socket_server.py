@@ -29,7 +29,8 @@ sockets_list = [server_socket]
 # List of connected clients - socket as a key, user header and name as data
 clients = {}
 
-print(f'Listening for connections on {IP}:{PORT}...')
+print(f"Listening for connections on {IP}:{PORT}...")
+
 
 # Handles message receiving
 def receive_message(client_socket):
@@ -44,10 +45,10 @@ def receive_message(client_socket):
             return False
 
         # Convert header to int value
-        message_length = int(message_header.decode('utf-8').strip())
+        message_length = int(message_header.decode("utf-8").strip())
 
         # Return an object of message header and message data
-        return {'header': message_header, 'data': client_socket.recv(message_length)}
+        return {"header": message_header, "data": client_socket.recv(message_length)}
 
     except:
 
@@ -56,6 +57,7 @@ def receive_message(client_socket):
         # socket.close() also invokes socket.shutdown(socket.SHUT_RDWR) what sends information about closing the socket (shutdown read/write)
         # and that's also a cause when we receive an empty message
         return False
+
 
 while True:
 
@@ -69,7 +71,6 @@ while True:
     #   - errors  - sockets with some exceptions
     # This is a blocking call, code execution will "wait" here and "get" notified in case any action should be taken
     read_sockets, _, exception_sockets = select.select(sockets_list, [], sockets_list)
-
 
     # Iterate over notified sockets
     for notified_socket in read_sockets:
@@ -95,7 +96,11 @@ while True:
             # Also save username and username header
             clients[client_socket] = user
 
-            print('Accepted new connection from {}:{}, username: {}'.format(*client_address, user['data'].decode('utf-8')))
+            print(
+                "Accepted new connection from {}:{}, username: {}".format(
+                    *client_address, user["data"].decode("utf-8")
+                )
+            )
 
         # Else existing socket is sending a message
         else:
@@ -105,7 +110,11 @@ while True:
 
             # If False, client disconnected, cleanup
             if message is False:
-                print('Closed connection from: {}'.format(clients[notified_socket]['data'].decode('utf-8')))
+                print(
+                    "Closed connection from: {}".format(
+                        clients[notified_socket]["data"].decode("utf-8")
+                    )
+                )
 
                 # Remove from list for socket.socket()
                 sockets_list.remove(notified_socket)
@@ -118,7 +127,9 @@ while True:
             # Get user by notified socket, so we will know who sent the message
             user = clients[notified_socket]
 
-            print(f'Received message from {user["data"].decode("utf-8")}: {message["data"].decode("utf-8")}')
+            print(
+                f'Received message from {user["data"].decode("utf-8")}: {message["data"].decode("utf-8")}'
+            )
 
             # Iterate over connected clients and broadcast message
             for client_socket in clients:
@@ -128,7 +139,12 @@ while True:
 
                     # Send user and message (both with their headers)
                     # We are reusing here message header sent by sender, and saved username header send by user when he connected
-                    client_socket.send(user['header'] + user['data'] + message['header'] + message['data'])
+                    client_socket.send(
+                        user["header"]
+                        + user["data"]
+                        + message["header"]
+                        + message["data"]
+                    )
 
     # It's not really necessary to have this, but will handle some socket exceptions just in case
     for notified_socket in exception_sockets:

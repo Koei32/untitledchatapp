@@ -22,7 +22,7 @@ def register_user(client: socket.socket):
     user, pwd = pickle.loads(client.recv(1024))
     print(f"received credentials {user}-{pwd}")
 
-    #check cred validity
+    # check cred validity
 
     db_entry = cur.execute(f"select * from users where user='{user}'").fetchall()
     if len(db_entry) != 0:
@@ -35,6 +35,7 @@ def register_user(client: socket.socket):
     user_db.commit()
     return user
 
+
 def login_user(client: socket.socket):
     user_db = sqlite3.connect("user.db")
     cur = user_db.cursor()
@@ -44,7 +45,7 @@ def login_user(client: socket.socket):
     response = client.recv(1024)
     user, pwd = pickle.loads(response)
 
-    #check cred validity
+    # check cred validity
 
     print(f"received credentials {user}-{pwd}")
 
@@ -54,25 +55,25 @@ def login_user(client: socket.socket):
         print(f"user '{user}' doesnt exist.")
         client.send("INV_USR".encode())
         return
-    
+
     if pwd != db_entry[0][1]:
         print(f"invalid password (correct pwd is {db_entry[0][1]})")
         client.send("INV_PWD".encode())
         return
-    
+
     client.send("SUCCESS".encode())
     print(f"{user} has logged in.")
-        
+
     return user
 
 
 def handle_connection(client: socket.socket):
-    
-    #acknowledge the connection
+
+    # acknowledge the connection
     client_ip = client.getpeername()
     print(f"{client_ip} has connected.")
-    
-    #receive greet and perform reg/log
+
+    # receive greet and perform reg/log
     greet = client.recv(1024).decode()
     if greet == "REG":
         print(f"{client_ip} has requested to register")
@@ -90,7 +91,7 @@ def handle_connection(client: socket.socket):
         print("client has sent an invalid greet")
         client.close()
         return
-    
+
     while True:
         try:
             message = client.recv(1024)
@@ -116,4 +117,3 @@ def receive():
 
 
 receive()
-

@@ -5,7 +5,6 @@ from config import ConfigManager
 from login_form import LoginForm
 
 
-
 #
 #
 # TODO: CHECK PASSWORD VALIDITY

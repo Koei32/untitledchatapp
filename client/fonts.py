@@ -7,4 +7,3 @@ default_font = QFont("Tahoma", pointSize=10)
 
 # warning_font.setStyleStrategy(QFont.StyleStrategy.NoAntialias)
 # default_font.setStyleStrategy(QFont.StyleStrategy.PreferBitmap)
-

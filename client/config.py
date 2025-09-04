@@ -6,7 +6,7 @@ cur_path = str(Path(__file__).parent.resolve())
 cfg_path = cur_path + "\\client.cfg"
 
 
-class ConfigManager():
+class ConfigManager:
     def __init__(self) -> None:
         self.reload_config()
 
@@ -19,4 +19,3 @@ class ConfigManager():
 
         self.img_path = cur_path + config["paths"]["images"]
         self.style_path = cur_path + config["paths"]["styles"]
-

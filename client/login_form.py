@@ -1,4 +1,13 @@
-from PySide6.QtWidgets import QWidget, QPushButton, QCheckBox, QLineEdit, QVBoxLayout, QHBoxLayout, QLabel, QSizePolicy, QMainWindow
+from PySide6.QtWidgets import (
+    QWidget,
+    QPushButton,
+    QLineEdit,
+    QVBoxLayout,
+    QHBoxLayout,
+    QLabel,
+    QSizePolicy,
+    QMainWindow,
+)
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt, QSize
 import pickle
@@ -10,6 +19,7 @@ from config import ConfigManager
 cfgmgr = ConfigManager()
 host = cfgmgr.host
 port = cfgmgr.port
+
 
 class LoginForm(QMainWindow):
     def __init__(self):
@@ -43,7 +53,7 @@ class LoginForm(QMainWindow):
         self.c.connect((host, port))
         self.c.send("LOG".encode())
         print("sent LOG, waiting for OK")
-        
+
         self.disable_ui_interaction()
 
         response = self.c.recv(1024).decode()
@@ -52,7 +62,7 @@ class LoginForm(QMainWindow):
             self.c.send(pickle.dumps((self.username, self.password)))
             auth = self.c.recv(1024).decode()
             print(auth)
-            #login
+            # login
             if auth == "INV_USR":
                 print("user doesnt exist on server")
                 self.set_and_show_info("Invalid user or password", "red")
@@ -66,7 +76,7 @@ class LoginForm(QMainWindow):
             else:
                 print("We have successfully logged into the server")
                 self.set_and_show_info("Logged in!", "green")
-    
+
     def check_password_validity(self) -> int:
         if len(self.password) < 8:
             return 1
@@ -74,27 +84,27 @@ class LoginForm(QMainWindow):
             if chr not in VALID_CHARS:
                 return 2
         return 0
-    
+
     def set_creds(self):
         self.username = self.user_field.text()
         self.password = self.pass_field.text()
         self.invalid_creds.setVisible(False)
         if self.username == "kill":
             self.c.close()
-    
+
     def init_ui(self):
         # SPLASH IMAGE
         self.hero_image = QLabel(self)
-        hero = QPixmap("./images/hero.png").scaled(260, 300, Qt.AspectRatioMode.KeepAspectRatio)
+        hero = QPixmap("./images/hero.png").scaled(
+            260, 300, Qt.AspectRatioMode.KeepAspectRatio
+        )
         self.hero_image.setPixmap(hero)
-
 
         # WARNINGS
         self.invalid_creds = QLabel("Username or password is invalid!")
         self.invalid_creds.setFont(warning_font)
         self.invalid_creds.setStyleSheet("color: red")
         self.invalid_creds.setVisible(False)
-
 
         # USER FIELDS
         self.user_label = QLabel("Screen Name")
@@ -104,14 +114,15 @@ class LoginForm(QMainWindow):
         self.user_field.setFixedWidth(110)
         self.user_field.textChanged.connect(self.set_creds)
 
-
         # PASSWORD FIELD
         self.pass_label = QLabel("Password")
         self.pass_label.setFont(default_font)
         self.pass_field = QLineEdit()
         self.pass_field.setFixedWidth(110)
         self.pass_field.setEchoMode(QLineEdit.EchoMode.Password)
-        self.pass_field.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
+        self.pass_field.setSizePolicy(
+            QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed
+        )
         self.pass_field.textChanged.connect(self.set_creds)
         self.pass_field.textChanged.connect(self.check_password_validity)
 
@@ -136,7 +147,9 @@ class LoginForm(QMainWindow):
 
         # LOGIN BUTTON
         self.login_button = QPushButton()
-        sign_on = QPixmap("./images/sign_on.png").scaled(50, 50, Qt.AspectRatioMode.KeepAspectRatio)
+        sign_on = QPixmap("./images/sign_on.png").scaled(
+            50, 50, Qt.AspectRatioMode.KeepAspectRatio
+        )
         self.login_button.setFixedWidth(50)
         self.login_button.setFixedHeight(50)
         self.login_button.setFlat(True)
@@ -192,4 +205,3 @@ class LoginForm(QMainWindow):
     def disable_ui_interaction(self):
         self.login_button.setEnabled(False)
         self.register_button.setEnabled(False)
-
