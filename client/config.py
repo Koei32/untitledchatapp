@@ -9,6 +9,8 @@ cfg_path = cur_path + "\\client.cfg"
 class ConfigManager:
     def __init__(self) -> None:
         self.reload_config()
+        with open(self.style_path + "client.qss") as qss:
+            self.style = qss.read()
 
     def reload_config(self):
         with open(cfg_path) as cfg:

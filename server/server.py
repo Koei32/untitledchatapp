@@ -94,6 +94,7 @@ def handle_connection(client: socket.socket):
 
     while True:
         try:
+            print("receiving...")
             message = client.recv(1024)
             if len(message) == 0:
                 raise ValueError
