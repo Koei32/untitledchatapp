@@ -38,10 +38,8 @@ class MessengerWindow(QMainWindow):
         self.chat_field.clear()
     
     def init_ui(self):
-        self.window_layout = QVBoxLayout()
         self.wrapper = QWidget()
-        self.wrapper_layout = QVBoxLayout()
-        self.setCentralWidget(self.wrapper)
+
         chat = QWidget()
         self.chat_field = QLineEdit()
         self.chat_field.returnPressed.connect(self.send_msg)
@@ -51,12 +49,16 @@ class MessengerWindow(QMainWindow):
         layout.addWidget(self.chat_field)
         layout.addWidget(send_btn)
         chat.setLayout(layout)
+
+        self.wrapper_layout = QVBoxLayout()
         self.wrapper_layout.addWidget(chat)
+        self.wrapper.setLayout(self.wrapper_layout)
+        self.setCentralWidget(self.wrapper)
     
     def add_message_entry(self, sender, content):
         self.wrapper_layout.addWidget(MessageEntry(sender, content, ""))
         self.wrapper.setLayout(self.wrapper_layout)
-        self.setLayout(self.window_layout)
+        self.setLayout(self.wrapper_layout)
     
 
 class MessageEntry(QWidget):
