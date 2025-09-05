@@ -21,3 +21,4 @@ class ConfigManager:
 
         self.img_path = cur_path + config["paths"]["images"]
         self.style_path = cur_path + config["paths"]["styles"]
+        self.sounds_path = cur_path + config["paths"]["sounds"]

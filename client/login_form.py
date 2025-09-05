@@ -46,7 +46,9 @@ class LoginForm(QMainWindow):
             else:
                 self.set_and_show_info("Successfully created account!", "green")
                 print("Successfully created account!")
+                self.client.user = self.username
                 self.client.show_messenger_window()
+                self.client.start_listener_thread()
         else:
             return False
 

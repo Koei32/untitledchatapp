@@ -10,20 +10,26 @@ from PySide6.QtWidgets import (
     QMainWindow,
 )
 from PySide6.QtGui import QPixmap
-from PySide6.QtCore import Qt, QSize
+from PySide6.QtCore import Qt, QSize, QUrl
+from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput, QSoundEffect
 import pickle
 import socket
 from fonts import warning_font, default_font
 from config import ConfigManager
 
 
+cfgmgr = ConfigManager()
+
+
 class MessengerWindow(QMainWindow):
     def __init__(self, client, receiver: str):
         super().__init__()
+        self.setWindowTitle(receiver)
         self.client = client
         self.user = client.user
         self.receiver = receiver
-
+        self.window_layout = QVBoxLayout()
+        self.setLayout(self.window_layout)
         self.init_ui()
       
     def send_msg(self):
@@ -44,3 +50,18 @@ class MessengerWindow(QMainWindow):
         chat.setLayout(layout)
         self.setCentralWidget(chat)
     
+    def add_message_entry(self, sender, content):
+        self.window_layout.addWidget(MessageEntry(sender, content, ""))
+    
+
+class MessageEntry(QWidget):
+    def __init__(self, user, message, time):
+        super().__init__()
+        layout = QHBoxLayout()
+        user_label = QLabel(user)
+        message_text = QLabel(message)
+        layout.addWidget(user_label)
+        # layout.addStretch(1)
+        layout.addWidget(message_text)
+        self.setLayout(layout)
+

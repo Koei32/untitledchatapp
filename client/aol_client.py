@@ -44,7 +44,7 @@ class Client():
         print(f"{sender} is sending you '{content}'")
 
     def start_listener_thread(self):
-        listener = threading.Thread(target=listen, args=(self,))
+        listener = threading.Thread(target=listen, args=(self,), daemon=True)
         listener.start()
 
 def listen(client: Client):
@@ -54,6 +54,7 @@ def listen(client: Client):
                 message = client.c.recv(1024)
                 sender, receiver, content = parse_msg(message)
                 client.received_message(sender, receiver, content)
+                client.msg_window.add_message_entry(sender, content)
         except:
             pass
 
