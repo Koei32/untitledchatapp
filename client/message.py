@@ -52,6 +52,7 @@ class MessengerWindow(QMainWindow):
     
     def add_message_entry(self, sender, content):
         self.window_layout.addWidget(MessageEntry(sender, content, ""))
+        self.setLayout(self.window_layout)
     
 
 class MessageEntry(QWidget):
