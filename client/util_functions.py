@@ -1,26 +1,19 @@
+import re
 from string import printable
 
 VALID_CHARS = printable[:-6]
 
 
-def hashit(string):
-    return hash(string)
+# sender-receiver;message
+def parse_msg(msg: bytes):
+    message = msg.decode()
+    x = re.split(r"[-;]", message)
 
+    sender = x[0] if len(x) > 0 else None
+    receiver = x[1] if len(x) > 1 else None
+    content = x[2] if len(x) > 2 else None
 
-import re
-
-
-def splitting():
-    message = input()
-    a = re.split(r"[-;]", message)
-
-    x = a[0] if len(a) > 0 else None
-    y = a[1] if len(a) > 1 else None
-    z = a[2] if len(a) > 2 else None
-    print(f"sender= {x}")
-    print(f"receiver= {y}")
-    print(f"content= {z}")
-    return x, y, z
+    return sender, receiver, content
 
 
 # splitting()

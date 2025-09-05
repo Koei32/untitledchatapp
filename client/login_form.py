@@ -79,7 +79,11 @@ class LoginForm(QMainWindow):
                 else:
                     print("We have successfully logged into the server")
                     self.set_and_show_info("Logged in!", "green")
+                    
+                    # we're logged in at this point, we need to show the buddy list (coming soon)
+
                     self.client.show_messenger_window()
+                    self.client.start_listener_thread()
         except ConnectionRefusedError or ConnectionAbortedError or TimeoutError:
             self.set_and_show_info("Could not connect to server.", "red")
 
@@ -116,6 +120,7 @@ class LoginForm(QMainWindow):
         self.user_label = QLabel("Screen Name")
         self.user_label.setFont(default_font)
         self.user_field = QLineEdit()
+        self.user_field.returnPressed.connect(self.send_login_msg)
         self.user_field.setMaxLength(16)
         self.user_field.setFixedWidth(110)
         self.user_field.textChanged.connect(self.set_creds)
@@ -124,6 +129,7 @@ class LoginForm(QMainWindow):
         self.pass_label = QLabel("Password")
         self.pass_label.setFont(default_font)
         self.pass_field = QLineEdit()
+        self.pass_field.returnPressed.connect(self.send_login_msg)
         self.pass_field.setFixedWidth(110)
         self.pass_field.setEchoMode(QLineEdit.EchoMode.Password)
         self.pass_field.setSizePolicy(
@@ -170,7 +176,6 @@ class LoginForm(QMainWindow):
         self.register_button.setFixedHeight(50)
         self.register_button.setFlat(True)
         self.register_button.clicked.connect(self.send_reg_msg)
-        # self.register_button.setIcon(sign_on)
         self.register_button.setIconSize(QSize(50, 50))
 
         # SETTING LAYOUTS

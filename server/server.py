@@ -10,8 +10,7 @@ s = socket.socket()
 s.bind((HOST, PORT))
 s.listen()
 
-clients: list[socket.socket] = []
-nicknames: dict[socket.socket, str] = {}
+clients: dict[str, socket.socket] = {}
 
 
 def register_user(client: socket.socket):
@@ -87,6 +86,7 @@ def handle_connection(client: socket.socket):
         if user is None:
             client.close()
             return
+        clients[user] = client
     else:
         print("client has sent an invalid greet")
         client.close()
@@ -95,23 +95,29 @@ def handle_connection(client: socket.socket):
     while True:
         try:
             message = client.recv(1024)
+            forward_message(message)
             if len(message) == 0:
                 raise ValueError
-            print(user, message.decode())
+            print(f"{user}:\t {message}")
         except:
-            # nickname = nicknames[client]
-            clients.remove(client)
-            # nicknames.pop(client)
+            clients.pop(user)
             print(f"{user} has disconnected.")
             client.close()
             return
+
+
+def forward_message(msg: bytes):
+    header = msg.decode().split(";")[0]
+    sender, receiver = header.split("-")
+    print(f"{sender} wants to send '{msg.decode().split(';')[1]}' to {receiver}")
+    clients[receiver].send(msg)
+
 
 
 def receive():
     print(f"Server is listening on {HOST}:{PORT}")
     while True:
         client, (addr, port) = s.accept()
-        clients.append(client)
         thread = threading.Thread(target=handle_connection, args=(client,))
         thread.start()
 

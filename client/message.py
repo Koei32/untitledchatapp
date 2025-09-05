@@ -18,11 +18,12 @@ from config import ConfigManager
 
 
 class MessengerWindow(QMainWindow):
-    def __init__(self, client):
+    def __init__(self, client, receiver: str):
         super().__init__()
         self.client = client
         chat = QWidget()
         self.chat_field = QLineEdit()
+        self.chat_field.returnPressed.connect(self.send_msg)
         send_btn = QPushButton("Send")
         send_btn.clicked.connect(self.send_msg)
         layout = QHBoxLayout()
@@ -33,3 +34,4 @@ class MessengerWindow(QMainWindow):
     
     def send_msg(self):
         self.client.c.send(self.chat_field.text().encode())
+        self.chat_field.clear()
