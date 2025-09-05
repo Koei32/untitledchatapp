@@ -22,27 +22,26 @@ port = cfgmgr.port
 
 
 class LoginForm(QMainWindow):
-    def __init__(self, client, client_socket: socket.socket):
+    def __init__(self, client):
         super().__init__()
-        self.c = client_socket
         self.client = client
         self.init_ui()
 
     def send_reg_msg(self):
-        self.c = socket.socket()
-        self.c.connect((host, port))
-        self.c.send("REG".encode())
+        self.client.c = socket.socket()
+        self.client.c.connect((host, port))
+        self.client.c.send("REG".encode())
         print("sending REG to server")
         self.disable_ui_interaction()
-        response = self.c.recv(1024).decode()
+        response = self.client.c.recv(1024).decode()
         if response == "OK":
             print("server responded OK, sending user and pwd")
-            self.c.send(pickle.dumps((self.username, self.password)))
-            auth = self.c.recv(1024).decode()
+            self.client.c.send(pickle.dumps((self.username, self.password)))
+            auth = self.client.c.recv(1024).decode()
             if auth == "USER_EXISTS":
                 print("user already exists on the server")
                 self.set_and_show_info("User already exists", "red")
-                self.c.close()
+                self.client.c.close()
                 self.login_button.setEnabled(True)
             else:
                 self.set_and_show_info("Successfully created account!", "green")
@@ -53,29 +52,29 @@ class LoginForm(QMainWindow):
 
     def send_login_msg(self):
         try:
-            self.c = socket.socket()
-            self.c.connect((host, port))
-            self.c.send("LOG".encode())
+            self.client.c = socket.socket()
+            self.client.c.connect((host, port))
+            self.client.c.send("LOG".encode())
             print("sent LOG, waiting for OK")
 
             self.disable_ui_interaction()
 
-            response = self.c.recv(1024).decode()
+            response = self.client.c.recv(1024).decode()
             if response == "OK":
                 print("server responded OK, sending user and pwd")
-                self.c.send(pickle.dumps((self.username, self.password)))
-                auth = self.c.recv(1024).decode()
+                self.client.c.send(pickle.dumps((self.username, self.password)))
+                auth = self.client.c.recv(1024).decode()
                 print(auth)
                 # login
                 if auth == "INV_USR":
                     print("user doesnt exist on server")
                     self.set_and_show_info("Invalid user or password", "red")
-                    self.c.close()
+                    self.client.c.close()
                     self.login_button.setEnabled(True)
                 elif auth == "INV_PWD":
                     print("password is wrong for user")
                     self.set_and_show_info("Invalid user or password", "red")
-                    self.c.close()
+                    self.client.c.close()
                     self.login_button.setEnabled(True)
                 else:
                     print("We have successfully logged into the server")
@@ -97,7 +96,7 @@ class LoginForm(QMainWindow):
         self.password = self.pass_field.text()
         self.invalid_creds.setVisible(False)
         if self.username == "kill":
-            self.c.close()
+            self.client.c.close()
 
     def init_ui(self):
         # SPLASH IMAGE

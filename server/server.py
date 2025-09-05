@@ -94,11 +94,10 @@ def handle_connection(client: socket.socket):
 
     while True:
         try:
-            print("receiving...")
             message = client.recv(1024)
             if len(message) == 0:
                 raise ValueError
-            print(message, "its me")
+            print(user, message.decode())
         except:
             # nickname = nicknames[client]
             clients.remove(client)

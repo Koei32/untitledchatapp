@@ -31,11 +31,11 @@ class Client():
 
 
     def show_login_window(self):
-        self.login_window = LoginForm(self, self.c)
+        self.login_window = LoginForm(self)
         self.login_window.show()
     
     def show_messenger_window(self):
         self.login_window.close()
-        self.msg_window = MessengerWindow(self, self.c)
+        self.msg_window = MessengerWindow(self)
         self.msg_window.show()
         
