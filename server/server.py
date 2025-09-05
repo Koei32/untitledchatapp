@@ -2,7 +2,7 @@ import socket
 import threading
 import pickle
 import sqlite3
-from client.util_functions import parse_msg
+from util_functions import parse_msg
 
 HOST = "koei.hackclub.app"
 PORT = 14169
