@@ -21,6 +21,7 @@ from util_functions import parse_msg
 class Client():
     def __init__(self, client: socket.socket):
         self.c = client
+        self.user = None
         cfg_mgr = ConfigManager()
         self.style = cfg_mgr.style
 
@@ -43,7 +44,7 @@ class Client():
         print(f"{sender} is sending you '{content}'")
 
     def start_listener_thread(self):
-        listener = threading.Thread(target=listen, args=(self,), daemon=True)
+        listener = threading.Thread(target=listen, args=(self,))
         listener.start()
 
 def listen(client: Client):

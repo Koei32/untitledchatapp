@@ -2,6 +2,7 @@ import socket
 import threading
 import pickle
 import sqlite3
+from client.util_functions import parse_msg
 
 HOST = "koei.hackclub.app"
 PORT = 14169
@@ -107,10 +108,12 @@ def handle_connection(client: socket.socket):
 
 
 def forward_message(msg: bytes):
-    header = msg.decode().split(";")[0]
-    sender, receiver = header.split("-")
-    print(f"{sender} wants to send '{msg.decode().split(';')[1]}' to {receiver}")
-    clients[receiver].send(msg)
+    sender, receiver, content = parse_msg(msg)
+    print(f"{sender} wants to send '{content}' to {receiver}")
+    try:
+        clients[receiver].send(msg)
+    except:
+        print(f"error: {receiver} is not connected to the server.")
 
 
 

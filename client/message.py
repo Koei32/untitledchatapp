@@ -21,6 +21,18 @@ class MessengerWindow(QMainWindow):
     def __init__(self, client, receiver: str):
         super().__init__()
         self.client = client
+        self.user = client.user
+        self.receiver = receiver
+
+        self.init_ui()
+      
+    def send_msg(self):
+        header = self.user + "-" + self.receiver + ";"
+        message = header + self.chat_field.text()
+        self.client.c.send(message.encode())
+        self.chat_field.clear()
+    
+    def init_ui(self):
         chat = QWidget()
         self.chat_field = QLineEdit()
         self.chat_field.returnPressed.connect(self.send_msg)
@@ -32,6 +44,3 @@ class MessengerWindow(QMainWindow):
         chat.setLayout(layout)
         self.setCentralWidget(chat)
     
-    def send_msg(self):
-        self.client.c.send(self.chat_field.text().encode())
-        self.chat_field.clear()
