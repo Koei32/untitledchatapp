@@ -1,0 +1,104 @@
+from PySide6.QtWidgets import (
+    QWidget,
+    QPushButton,
+    QLineEdit,
+    QVBoxLayout,
+    QHBoxLayout,
+    QLabel,
+    QMainWindow,
+    QSizePolicy,
+    QScrollArea,
+    QFrame
+)
+from config import ConfigManager
+from PySide6.QtCore import Qt
+
+cfgmgr = ConfigManager()
+
+
+class MessengerWindow(QMainWindow):
+    def __init__(self, client, receiver: str):
+        super().__init__()
+        self.setWindowTitle(receiver)
+        self.client = client
+        self.user = client.user
+        self.receiver = receiver
+
+        self.init_ui()
+      
+    def send_msg(self):
+        header = self.user + "-" + self.receiver + ";"
+        message = header + self.chat_field.text()
+        self.client.c.send(message.encode())
+        self.chat_field.clear()
+    
+    def init_ui(self):
+        self.wrapper = QWidget()
+
+        self.chat_log_frame = QScrollArea()
+        self.chat_log_frame.setFixedHeight(300)
+
+        self.chat_log_layout = QVBoxLayout()
+        self.chat_log_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.chat_log_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.chat_log_layout.setSpacing(0)
+        self.chat_log_layout.setContentsMargins(0, 0, 0, 0)
+        self.chat_log = QWidget()
+        self.chat_log.setFixedWidth(500)
+        self.chat_log_layout.setStretch
+        self.chat_log.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Ignored)
+        self.chat_log.setLayout(self.chat_log_layout)
+        self.chat_log_layout.addWidget(MessageEntry("System", "hi", ""))
+
+        self.chat_log_frame.setWidget(self.chat_log)
+
+
+        # chat controls
+        self.chat_controls = QWidget()
+        self.chat_field = QLineEdit()
+        self.chat_field.returnPressed.connect(self.send_msg)
+        send_btn = QPushButton("Send")
+        send_btn.clicked.connect(self.send_msg)
+        self.chat_controls_layout = QHBoxLayout()
+        self.chat_controls_layout.addWidget(self.chat_field)
+        self.chat_controls_layout.addWidget(send_btn)
+        self.chat_controls.setLayout(self.chat_controls_layout)
+
+
+        self.wrapper_layout = QVBoxLayout()
+        self.wrapper_layout.addWidget(self.chat_log_frame)
+        self.wrapper_layout.addWidget(self.chat_controls)
+        message = MessageEntry("system", "Welcome", "")
+        self.wrapper_layout.addWidget(message)
+        self.wrapper.setLayout(self.wrapper_layout)
+        self.setCentralWidget(self.wrapper)
+    
+    def add_message_entry(self, sender, content):
+        message = QWidget()
+        layout = QHBoxLayout()
+        user_label = QLabel(sender)
+        message_text = QLabel(content)
+        layout.addWidget(user_label)
+        layout.addWidget(message_text)
+        message.setLayout(layout)
+        message.setFixedHeight(12)
+
+        label = QLabel(f"{sender}: {content}")
+        self.chat_log_layout.addWidget(label)
+        self.chat_log.resize(280 ,len(self.chat_log.children()) * 12)
+        # self.chat_log.setLayout(self.chat_log_layout)
+        # self.chat_log_frame.setWidget(self.chat_log)
+    
+
+class MessageEntry(QWidget):
+    def __init__(self, user, message, time):
+        super().__init__()
+        layout = QHBoxLayout()
+        user_label = QLabel(user)
+        message_text = QLabel(message)
+        layout.addWidget(user_label)
+        # layout.addStretch(1)
+        layout.addWidget(message_text)
+        self.setLayout(layout)
+        self.setFixedHeight(12)
+

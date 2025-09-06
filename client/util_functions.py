@@ -14,6 +14,3 @@ def parse_msg(msg: bytes):
     content = x[2]
 
     return sender, receiver, content
-
-
-# splitting()
