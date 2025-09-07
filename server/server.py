@@ -4,7 +4,7 @@ import pickle
 import sqlite3
 from util_functions import parse_msg
 
-HOST = "koei.hackclub.app"
+HOST = "localhost"
 PORT = 14169
 
 s = socket.socket()

@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QMainWindow,
+    QTextEdit,
     QSizePolicy,
     QScrollArea,
     QFrame
@@ -20,6 +21,7 @@ class MessengerWindow(QMainWindow):
     def __init__(self, client, receiver: str):
         super().__init__()
         self.setWindowTitle(receiver)
+        self.setFixedSize(600, 350)
         self.client = client
         self.user = client.user
         self.receiver = receiver
@@ -35,6 +37,7 @@ class MessengerWindow(QMainWindow):
     def init_ui(self):
         self.wrapper = QWidget()
 
+        '''
         self.chat_log_frame = QScrollArea()
         self.chat_log_frame.setFixedHeight(300)
 
@@ -44,14 +47,20 @@ class MessengerWindow(QMainWindow):
         self.chat_log_layout.setSpacing(0)
         self.chat_log_layout.setContentsMargins(0, 0, 0, 0)
         self.chat_log = QWidget()
-        self.chat_log.setFixedWidth(500)
+        self.chat_log.setFixedWidth(450)
         self.chat_log_layout.setStretch
         self.chat_log.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Ignored)
         self.chat_log.setLayout(self.chat_log_layout)
         self.chat_log_layout.addWidget(MessageEntry("System", "hi", ""))
 
         self.chat_log_frame.setWidget(self.chat_log)
+        '''
 
+        self.chat_log_frame = QTextEdit()
+        self.chat_log_frame.setAcceptRichText(True)
+        self.chat_log_frame.setReadOnly(True)
+        self.chat_log_frame.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.chat_log_frame.resize(600, 300)
 
         # chat controls
         self.chat_controls = QWidget()
@@ -74,6 +83,7 @@ class MessengerWindow(QMainWindow):
         self.setCentralWidget(self.wrapper)
     
     def add_message_entry(self, sender, content):
+        '''
         message = QWidget()
         layout = QHBoxLayout()
         user_label = QLabel(sender)
@@ -84,8 +94,20 @@ class MessengerWindow(QMainWindow):
         message.setFixedHeight(12)
 
         label = QLabel(f"{sender}: {content}")
+        label.setFixedWidth(450)
+
         self.chat_log_layout.addWidget(label)
-        self.chat_log.resize(280 ,len(self.chat_log.children()) * 12)
+        self.chat_log.resize(450 ,len(self.chat_log.children()) * 14)
+        print(self.chat_log.size())
+        print(self.chat_log_frame.size())
+        print(label.size())
+        '''
+        user_msg_style = "color: red; font-family: 'Times New Roman'"
+        msg_style = "color: blue; font-family: 'Times New Roman'"
+        if sender == self.client.user:
+            self.chat_log_frame.append(f'<b style="{user_msg_style}">{sender}</b>: {content}')
+        else:
+            self.chat_log_frame.append(f'<b style="{msg_style}">{sender}</b>: {content}')
         # self.chat_log.setLayout(self.chat_log_layout)
         # self.chat_log_frame.setWidget(self.chat_log)
     

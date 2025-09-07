@@ -208,7 +208,7 @@ class LoginForm(QMainWindow):
         wrapper.setLayout(layout)
         self.setCentralWidget(wrapper)
         self.setWindowTitle("Untitled Chat App")
-        self.setFixedSize(280, 380)
+        self.setFixedSize(200, 340)
 
     def set_and_show_info(self, message: str, color: str):
         self.invalid_creds.setText(message)

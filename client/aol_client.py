@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QApplication, QStyleFactory
-from PySide6.QtGui import QFont
+from PySide6.QtGui import QFont, QPalette, QColor
 from PySide6.QtCore import QObject, Signal
 from PySide6 import QtCore
 import sys
@@ -9,12 +9,12 @@ from messenger import MessengerWindow
 import socket
 import threading
 from util_functions import parse_msg
+from fonts import main_pallete
 
 #
 #
 # TODO: CHECK PASSWORD VALIDITY
 # TODO: STORE HASHED PASSWORDS and CHECK WITH HASH (salt and all)
-# TODO: ADD TAB SWITCHING FOR REG/LOGIN
 #
 #
 
@@ -36,7 +36,10 @@ class Client():
         self.msg_mgr.signal_message_received.connect(self.on_received_message)
 
         app = QApplication(sys.argv)
-        app.setStyleSheet(cfg_mgr.style)
+        app.setDesktopSettingsAware(False)
+        app.setStyle(QStyleFactory.create("Windows"))
+        # app.setStyleSheet(cfg_mgr.style)
+        app.setPalette(main_pallete())
 
         self.show_login_window()
         app.exec()
