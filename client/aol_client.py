@@ -38,7 +38,6 @@ class Client():
         app = QApplication(sys.argv)
         app.setDesktopSettingsAware(False)
         app.setStyle(QStyleFactory.create("Windows"))
-        # app.setStyleSheet(cfg_mgr.style)
         app.setPalette(main_pallete())
 
         self.show_login_window()
@@ -48,9 +47,9 @@ class Client():
         self.login_window = LoginForm(self)
         self.login_window.show()
     
-    def show_messenger_window(self):
+    def show_messenger_window(self, buddy):
         self.login_window.close()
-        self.msg_window = MessengerWindow(self, "mito")
+        self.msg_window = MessengerWindow(self, buddy)
         self.msg_window.show()
 
     @QtCore.Slot()

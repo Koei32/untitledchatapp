@@ -7,6 +7,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QSizePolicy,
     QMainWindow,
+    QFrame
 )
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt, QSize
@@ -47,7 +48,6 @@ class LoginForm(QMainWindow):
                 self.set_and_show_info("Successfully created account!", "green")
                 print("Successfully created account!")
                 self.client.user = self.username
-                self.client.show_messenger_window()
                 self.client.start_listener_thread()
         else:
             return False
@@ -105,12 +105,20 @@ class LoginForm(QMainWindow):
             self.client.c.close()
 
     def init_ui(self):
+        self.setWindowTitle("Sign On")
+        self.setFixedSize(200, 300)
         # SPLASH IMAGE
         self.hero_image = QLabel(self)
         hero = QPixmap("./images/hero.png").scaled(
-            260, 300, Qt.AspectRatioMode.KeepAspectRatio
+            180, 200, Qt.AspectRatioMode.KeepAspectRatio
         )
         self.hero_image.setPixmap(hero)
+        self.setContentsMargins(0,0,0,0)
+
+        # SEPARATOR
+        separator = QFrame()
+        separator.setFrameShape(QFrame.Shape.HLine)
+        separator.setFrameShadow(QFrame.Shadow.Sunken)
 
         # WARNINGS
         self.invalid_creds = QLabel("Username or password is invalid!")
@@ -161,15 +169,12 @@ class LoginForm(QMainWindow):
 
         # LOGIN BUTTON
         self.login_button = QPushButton()
-        sign_on = QPixmap("./images/sign_on.png").scaled(
-            50, 50, Qt.AspectRatioMode.KeepAspectRatio
-        )
-        self.login_button.setFixedWidth(50)
-        self.login_button.setFixedHeight(50)
+        sign_on = QPixmap("./images/signon.png")
+        self.login_button.setFixedSize(48, 38)
         self.login_button.setFlat(True)
         self.login_button.clicked.connect(self.send_login_msg)
         self.login_button.setIcon(sign_on)
-        self.login_button.setIconSize(QSize(50, 50))
+        self.login_button.setIconSize(QSize(48, 38))
 
         # REGISTER BUTTON
         # sign_on = QPixmap("./images/sign_on.png").scaled(50, 50, Qt.AspectRatioMode.KeepAspectRatio)
@@ -183,6 +188,7 @@ class LoginForm(QMainWindow):
         # SETTING LAYOUTS
         layout = QVBoxLayout()
         layout.addWidget(self.hero_image)
+        layout.addWidget(separator)
         fields = QWidget()
         fields_layout = QVBoxLayout()
         fields_layout.addWidget(self.screen_name)
@@ -191,11 +197,13 @@ class LoginForm(QMainWindow):
         fields_layout.addSpacing(5)
         fields_layout.addWidget(self.invalid_creds)
         fields_layout.addStretch(1)
+        fields_layout.setContentsMargins(0,0,0,0)
 
         buttons = QWidget()
         buttons_layout = QHBoxLayout()
         buttons_layout.setContentsMargins(0, 0, 0, 0)
         buttons_layout.addWidget(self.register_button)
+        buttons_layout.addStretch()
         buttons_layout.addWidget(self.login_button)
         buttons.setLayout(buttons_layout)
 
@@ -207,8 +215,6 @@ class LoginForm(QMainWindow):
         wrapper = QWidget()
         wrapper.setLayout(layout)
         self.setCentralWidget(wrapper)
-        self.setWindowTitle("Untitled Chat App")
-        self.setFixedSize(200, 340)
 
     def set_and_show_info(self, message: str, color: str):
         self.invalid_creds.setText(message)
