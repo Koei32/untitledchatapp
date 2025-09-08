@@ -23,7 +23,7 @@ def main_pallete():
     pal.setColor(QPalette.ColorRole.Midlight, QColor(232, 232, 232))     # Mid highlight
     pal.setColor(QPalette.ColorRole.Mid, QColor(168, 168, 168))          # Middle shadow
     pal.setColor(QPalette.ColorRole.Dark, QColor(177, 177, 177))         # Deep shadow
-    pal.setColor(QPalette.ColorRole.Shadow, QColor(118, 118, 118))             # Outlines
+    pal.setColor(QPalette.ColorRole.Shadow, QColor(118, 118, 118))       # Outlines
 
     # Selection
     pal.setColor(QPalette.ColorRole.Highlight, QColor(0, 0, 128))        # Dark blue highlight

@@ -84,7 +84,7 @@ class LoginForm(QMainWindow):
                     
                     # we're logged in at this point, we need to show the buddy list (coming soon)
                     self.client.user = self.username
-                    self.client.show_messenger_window() #temp: should be buddy list
+                    self.client.show_messenger_window("mito") #temp: should be buddy list
                     self.client.start_listener_thread()
         except ConnectionRefusedError or ConnectionAbortedError or TimeoutError:
             self.set_and_show_info("Could not connect to server.", "red")
