@@ -1,7 +1,7 @@
 from PySide6.QtGui import QFont, QPalette, QColor
 
 
-warning_font = QFont("Trebuchet MS", pointSize=10, weight=900)
+warning_font = QFont("Trebuchet MS", pointSize=10, weight=500)
 
 default_font = QFont("Tahoma", pointSize=8)
 

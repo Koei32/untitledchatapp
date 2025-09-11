@@ -29,37 +29,63 @@ class LoginForm(QMainWindow):
         self.init_ui()
 
     def send_reg_msg(self):
-        self.client.c = socket.socket()
-        self.client.c.connect((host, port))
-        self.client.c.send("REG".encode())
-        print("sending REG to server")
-        self.disable_ui_interaction()
-        response = self.client.c.recv(1024).decode()
-        if response == "OK":
-            print("server responded OK, sending user and pwd")
-            self.client.c.send(pickle.dumps((self.username, self.password)))
-            auth = self.client.c.recv(1024).decode()
-            if auth == "USER_EXISTS":
-                print("user already exists on the server")
-                self.set_and_show_info("User already exists", "red")
-                self.client.c.close()
-                self.login_button.setEnabled(True)
-            else:
-                self.set_and_show_info("Successfully created account!", "green")
-                print("Successfully created account!")
-                self.client.user = self.username
-                self.client.start_listener_thread()
-        else:
-            return False
+        match self.check_cred_validity():
+            case 1:
+                self.set_and_show_info("Screen Name cannot be empty!", "orange")
+                return
+            case 2:
+                self.set_and_show_info("Password must be atleast 8 characters!", "orange")
+                return
+            case 3:
+                self.set_and_show_info("Password contains invalid characters!", "orange")
+                return
+        
+        try:
+            self.client.c = socket.socket()
+            self.client.c.connect((host, port))
+            self.client.c.send("REG".encode())
+            print("sending REG to server, waiting for OK")
+
+            self.set_ui_interactable(False)
+
+            response = self.client.c.recv(1024).decode()
+            if response == "OK":
+                print("server responded OK, sending user and pwd")
+                self.client.c.send(pickle.dumps((self.username, self.password)))
+                auth = self.client.c.recv(1024).decode()
+                if auth == "USER_EXISTS":
+                    print("user already exists on the server")
+                    self.set_and_show_info("User already exists", "red")
+                    self.client.c.close()
+                    self.set_ui_interactable(True)
+                else:
+                    self.set_and_show_info("Successfully created account!", "green")
+                    print("Successfully created account!")
+                    self.client.user = self.username
+                    self.client.show_messenger_window("mito") #temp: should be buddy list
+                    self.client.start_listener_thread()
+        except ConnectionRefusedError or ConnectionAbortedError or TimeoutError:
+            self.set_and_show_info("Could not connect to server.", "red")
 
     def send_login_msg(self):
+        match self.check_cred_validity():
+            case 1:
+                self.set_and_show_info("Screen Name cannot be empty!", "orange")
+                return
+            case 2:
+                self.set_and_show_info("Password must be atleast 8 characters!", "orange")
+                return
+            case 3:
+                self.set_and_show_info("Password contains invalid characters!", "orange")
+                return
+        
         try:
             self.client.c = socket.socket()
             self.client.c.connect((host, port))
             self.client.c.send("LOG".encode())
             print("sent LOG, waiting for OK")
 
-            self.disable_ui_interaction()
+            self.set_ui_interactable(False)
 
             response = self.client.c.recv(1024).decode()
             if response == "OK":
@@ -72,12 +98,12 @@ class LoginForm(QMainWindow):
                     print("user doesnt exist on server")
                     self.set_and_show_info("Invalid user or password", "red")
                     self.client.c.close()
-                    self.login_button.setEnabled(True)
+                    self.set_ui_interactable(True)
                 elif auth == "INV_PWD":
                     print("password is wrong for user")
                     self.set_and_show_info("Invalid user or password", "red")
                     self.client.c.close()
-                    self.login_button.setEnabled(True)
+                    self.set_ui_interactable(True)
                 else:
                     print("We have successfully logged into the server")
                     self.set_and_show_info("Logged in!", "green")
@@ -89,20 +115,36 @@ class LoginForm(QMainWindow):
         except ConnectionRefusedError or ConnectionAbortedError or TimeoutError:
             self.set_and_show_info("Could not connect to server.", "red")
 
-    def check_password_validity(self) -> int:
-        if len(self.password) < 8:
+    def check_cred_validity(self) -> int:
+        if len(self.username) == 0:
+            self.set_ui_interactable(False)
             return 1
+        if len(self.password) < 4:
+            self.set_ui_interactable(False)
+            return 2
         for chr in self.password:
             if chr not in VALID_CHARS:
-                return 2
+                self.set_ui_interactable(False)
+                return 3
+        self.set_ui_interactable(True)
         return 0
 
     def set_creds(self):
-        self.username = self.user_field.text()
+        # self.invalid_creds.setVisible(False)
         self.password = self.pass_field.text()
-        self.invalid_creds.setVisible(False)
+        self.username = self.user_field.text()
         if self.username == "kill":
             self.client.c.close()
+        self.check_cred_validity()
+    
+    def set_and_show_info(self, message: str, color: str):
+        self.invalid_creds.setText(message)
+        self.invalid_creds.setStyleSheet(f"color: {color}")
+        self.invalid_creds.setVisible(True)
+
+    def set_ui_interactable(self, state: bool):
+        self.login_button.setEnabled(state)
+        self.register_button.setEnabled(state)
 
     def init_ui(self):
         self.setWindowTitle("Sign On")
@@ -134,7 +176,9 @@ class LoginForm(QMainWindow):
         self.user_field.setMaxLength(16)
         self.user_field.setFixedWidth(110)
         self.user_field.textChanged.connect(self.set_creds)
+        self.username = self.user_field.text()
 
+        
         # PASSWORD FIELD
         self.pass_label = QLabel("Password")
         self.pass_label.setFont(default_font)
@@ -146,7 +190,8 @@ class LoginForm(QMainWindow):
             QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed
         )
         self.pass_field.textChanged.connect(self.set_creds)
-        self.pass_field.textChanged.connect(self.check_password_validity)
+        self.password = self.pass_field.text()
+
 
         # GENERATING H LAYOUTS
         self.screen_name = QWidget()
@@ -216,13 +261,7 @@ class LoginForm(QMainWindow):
         wrapper.setLayout(layout)
         self.setCentralWidget(wrapper)
 
-    def set_and_show_info(self, message: str, color: str):
-        self.invalid_creds.setText(message)
-        self.invalid_creds.setStyleSheet(f"color: {color}")
-        self.invalid_creds.setVisible(True)
 
-    def disable_ui_interaction(self):
-        self.login_button.setEnabled(False)
-        self.register_button.setEnabled(False)
+    
 
   
