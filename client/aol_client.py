@@ -3,13 +3,15 @@ from PySide6.QtGui import QFont, QPalette, QColor
 from PySide6.QtCore import QObject, Signal
 from PySide6 import QtCore
 import sys
-from config import ConfigManager
-from login_form import LoginForm
-from messenger import MessengerWindow
 import socket
 import threading
 from util_functions import parse_msg
 from fonts import main_pallete
+
+from config import ConfigManager
+from login_form import LoginForm
+from messenger import MessengerWindow
+from buddy_list import BuddyList
 
 #
 #
@@ -24,6 +26,7 @@ class Client():
     def __init__(self, client: socket.socket):
         self.c = client
         self.user = None
+        self.user_list = []
         cfg_mgr = ConfigManager()
 
         self.msg_mgr = MessageManager()
@@ -46,7 +49,12 @@ class Client():
     def show_login_window(self):
         self.login_window = LoginForm(self)
         self.login_window.show()
-    
+
+    def show_buddylist(self):
+        self.login_window.close()
+        self.buddylist = BuddyList(self)
+        self.buddylist.show()
+
     def show_messenger_window(self, buddy):
         self.login_window.close()
         self.msg_window = MessengerWindow(self, buddy)

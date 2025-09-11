@@ -7,6 +7,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QMainWindow,
     QTextEdit,
+    QListWidget,
     QSizePolicy,
     QScrollArea,
     QFrame
@@ -16,12 +17,9 @@ from PySide6.QtCore import Qt
 
 cfgmgr = ConfigManager()
 
-
 class MessengerWindow(QMainWindow):
     def __init__(self, client, receiver: str):
         super().__init__()
-        self.setWindowTitle(receiver)
-        self.setFixedSize(600, 350)
         self.client = client
         self.user = client.user
         self.receiver = receiver
@@ -29,32 +27,17 @@ class MessengerWindow(QMainWindow):
         self.init_ui()
       
     def send_msg(self):
+        if len(self.chat_field.text().strip()) == 0:
+            return
         header = self.user + "-" + self.receiver + ";"
         message = header + self.chat_field.text()
         self.client.c.send(message.encode())
         self.chat_field.clear()
     
     def init_ui(self):
+        self.setWindowTitle(self.receiver)
+        self.setFixedSize(600, 350)
         self.wrapper = QWidget()
-
-        '''
-        self.chat_log_frame = QScrollArea()
-        self.chat_log_frame.setFixedHeight(300)
-
-        self.chat_log_layout = QVBoxLayout()
-        self.chat_log_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        self.chat_log_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.chat_log_layout.setSpacing(0)
-        self.chat_log_layout.setContentsMargins(0, 0, 0, 0)
-        self.chat_log = QWidget()
-        self.chat_log.setFixedWidth(450)
-        self.chat_log_layout.setStretch
-        self.chat_log.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Ignored)
-        self.chat_log.setLayout(self.chat_log_layout)
-        self.chat_log_layout.addWidget(MessageEntry("System", "hi", ""))
-
-        self.chat_log_frame.setWidget(self.chat_log)
-        '''
 
         self.chat_log_frame = QTextEdit()
         self.chat_log_frame.setAcceptRichText(True)

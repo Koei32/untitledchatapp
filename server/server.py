@@ -8,6 +8,7 @@ from logger import log, warn, error, success, message
 HOST = "localhost"
 PORT = 14169
 
+
 s = socket.socket()
 s.bind((HOST, PORT))
 s.listen()
@@ -22,9 +23,6 @@ def register_user(client: socket.socket):
     client.send("OK".encode())
     user, pwd = pickle.loads(client.recv(1024))
     log(f"received credentials {user}-{pwd}")
-
-    # check cred validity
-
     db_entry = cur.execute(f"select * from users where user='{user}'").fetchall()
     if len(db_entry) != 0:
         client.send("USER_EXISTS".encode())
@@ -97,7 +95,11 @@ def handle_connection(client: socket.socket):
     while True:
         try:
             message = client.recv(1024)
-            forward_message(message)
+            if message.decode() in KNOWN_WORDS:
+                KNOWN_WORDS[message.decode()](client)
+                continue
+            else:
+                forward_message(message)
             if len(message) == 0:
                 raise ValueError
         except:
@@ -105,6 +107,18 @@ def handle_connection(client: socket.socket):
             warn(f"{user} has disconnected.")
             client.close()
             return
+
+
+def send_user_list(client: socket.socket):
+    log("user has requested user list")
+    user_db = sqlite3.connect("user.db")
+    cur = user_db.cursor()
+    users = cur.execute(f"select user from users").fetchall()
+    user_list = []
+    for i in users:
+        user_list.append(i[0])
+    log(f"sending {user_list}")
+    client.send(pickle.dumps(user_list))
 
 
 def forward_message(msg: bytes):
@@ -124,5 +138,9 @@ def receive():
         thread = threading.Thread(target=handle_connection, args=(client,))
         thread.start()
 
+
+KNOWN_WORDS = {
+    "GET_USERS": send_user_list,
+}
 
 receive()

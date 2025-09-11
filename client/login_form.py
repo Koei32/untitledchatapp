@@ -108,9 +108,14 @@ class LoginForm(QMainWindow):
                     print("We have successfully logged into the server")
                     self.set_and_show_info("Logged in!", "green")
                     
+                    self.client.c.send("GET_USERS".encode())
+                    user_list = self.client.c.recv(1024)
+                    self.client.user_list = pickle.loads(user_list)
+                    print(self.client.user_list)
                     # we're logged in at this point, we need to show the buddy list (coming soon)
                     self.client.user = self.username
-                    self.client.show_messenger_window("mito") #temp: should be buddy list
+                    # self.client.show_messenger_window("mito") #temp: should be buddy list
+                    self.client.show_buddylist()
                     self.client.start_listener_thread()
         except ConnectionRefusedError or ConnectionAbortedError or TimeoutError:
             self.set_and_show_info("Could not connect to server.", "red")
