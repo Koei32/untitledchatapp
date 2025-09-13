@@ -31,6 +31,8 @@ class Client():
 
         self.msg_mgr = MessageManager()
 
+        self.msg_windows = {}
+
         self.msg_listener = MessageListener(self)
         self.msg_listener_thread = QtCore.QThread()
         self.msg_listener.moveToThread(self.msg_listener_thread)
@@ -57,13 +59,13 @@ class Client():
 
     def show_messenger_window(self, buddy):
         self.login_window.close()
-        self.msg_window = MessengerWindow(self, buddy)
-        self.msg_window.show()
+        self.msg_windows[buddy] = MessengerWindow(self, buddy)
+        self.msg_windows[buddy].show()
 
     @QtCore.Slot()
     def on_received_message(self, data: tuple):
         print(f"{data[0]} is sending you '{data[2]}'")
-        self.msg_window.add_message_entry(data[0], data[2])
+        self.msg_windows[data[0]].add_message_entry(data[0], data[2])
 
     def start_listener_thread(self):
         self.msg_listener_thread.start()
@@ -77,7 +79,7 @@ class MessageListener(QObject):
         super().__init__()
         self.client = client
         self.msg_manager = self.client.msg_mgr
-    
+
     @QtCore.Slot()
     def listen(self):
         print("listener thread started")

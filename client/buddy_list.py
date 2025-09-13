@@ -60,9 +60,14 @@ class BuddyList(QMainWindow):
         online_list.setHeaderHidden(True)
         buddies = QTreeWidgetItem(online_list, ["Buddies"])
         for user in self.client.user_list:
-            QTreeWidgetItem(buddies, [user])
+            x = QTreeWidgetItem(buddies, [user])
+
+        online_list.itemDoubleClicked.connect(self.open_msg_window)
 
         online_list_wrapper_layout.addWidget(online_list)
         wrapper_layout.addWidget(online_list_wrapper)
         self.setCentralWidget(wrapper)
+    
+    def open_msg_window(self, listitem):
+        self.client.show_messenger_window(listitem.text(0))
 

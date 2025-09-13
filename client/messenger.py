@@ -1,3 +1,4 @@
+from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import (
     QWidget,
     QPushButton,
@@ -32,6 +33,7 @@ class MessengerWindow(QMainWindow):
         header = self.user + "-" + self.receiver + ";"
         message = header + self.chat_field.text()
         self.client.c.send(message.encode())
+        self.add_message_entry(self.user, self.chat_field.text())
         self.chat_field.clear()
     
     def init_ui(self):
@@ -64,8 +66,11 @@ class MessengerWindow(QMainWindow):
         self.wrapper_layout.addWidget(message)
         self.wrapper.setLayout(self.wrapper_layout)
         self.setCentralWidget(self.wrapper)
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        self.client.msg_windows.pop(self.receiver)
     
-    def add_message_entry(self, sender, content):
+    def add_message_entry(self, sender: str, content: str):
         '''
         message = QWidget()
         layout = QHBoxLayout()

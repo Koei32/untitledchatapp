@@ -5,7 +5,7 @@ import sqlite3
 from util_functions import parse_msg
 from logger import log, warn, error, success, message
 
-HOST = "localhost"
+HOST = "koei.hackclub.com"
 PORT = 14169
 
 
@@ -80,6 +80,7 @@ def handle_connection(client: socket.socket):
         if user is None:
             client.close()
             return
+        clients[user] = client
     elif greet == "LOG":
         log("client has requested to log in")
         user = login_user(client)
@@ -127,7 +128,7 @@ def forward_message(msg: bytes):
     try:
         clients[receiver].send(msg)
     except:
-        error(f"error: {receiver} is not connected to the server.")
+        error(f"error: {receiver} is away")
 
 
 
