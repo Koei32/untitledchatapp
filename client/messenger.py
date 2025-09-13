@@ -14,7 +14,7 @@ from PySide6.QtWidgets import (
     QFrame
 )
 from config import ConfigManager
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QEvent
 
 cfgmgr = ConfigManager()
 
@@ -28,12 +28,12 @@ class MessengerWindow(QMainWindow):
         self.init_ui()
       
     def send_msg(self):
-        if len(self.chat_field.text().strip()) == 0:
+        if len(self.chat_field.toPlainText().strip()) == 0:
             return
         header = self.user + "-" + self.receiver + ";"
-        message = header + self.chat_field.text()
+        message = header + self.chat_field.toPlainText()
         self.client.c.send(message.encode())
-        self.add_message_entry(self.user, self.chat_field.text())
+        self.add_message_entry(self.user, self.chat_field.toPlainText())
         self.chat_field.clear()
     
     def init_ui(self):
@@ -49,8 +49,8 @@ class MessengerWindow(QMainWindow):
 
         # chat controls
         self.chat_controls = QWidget()
-        self.chat_field = QLineEdit()
-        self.chat_field.returnPressed.connect(self.send_msg)
+        self.chat_field = QTextEdit()
+        self.chat_field.installEventFilter(self)
         send_btn = QPushButton("Send")
         send_btn.clicked.connect(self.send_msg)
         self.chat_controls_layout = QHBoxLayout()
@@ -62,8 +62,6 @@ class MessengerWindow(QMainWindow):
         self.wrapper_layout = QVBoxLayout()
         self.wrapper_layout.addWidget(self.chat_log_frame)
         self.wrapper_layout.addWidget(self.chat_controls)
-        message = MessageEntry("system", "Welcome", "")
-        self.wrapper_layout.addWidget(message)
         self.wrapper.setLayout(self.wrapper_layout)
         self.setCentralWidget(self.wrapper)
 
@@ -71,25 +69,6 @@ class MessengerWindow(QMainWindow):
         self.client.msg_windows.pop(self.receiver)
     
     def add_message_entry(self, sender: str, content: str):
-        '''
-        message = QWidget()
-        layout = QHBoxLayout()
-        user_label = QLabel(sender)
-        message_text = QLabel(content)
-        layout.addWidget(user_label)
-        layout.addWidget(message_text)
-        message.setLayout(layout)
-        message.setFixedHeight(12)
-
-        label = QLabel(f"{sender}: {content}")
-        label.setFixedWidth(450)
-
-        self.chat_log_layout.addWidget(label)
-        self.chat_log.resize(450 ,len(self.chat_log.children()) * 14)
-        print(self.chat_log.size())
-        print(self.chat_log_frame.size())
-        print(label.size())
-        '''
         user_msg_style = "color: red; font-family: 'Times New Roman'"
         msg_style = "color: blue; font-family: 'Times New Roman'"
         if sender == self.client.user:
@@ -98,6 +77,14 @@ class MessengerWindow(QMainWindow):
             self.chat_log_frame.append(f'<b style="{msg_style}">{sender}</b>: {content}')
         # self.chat_log.setLayout(self.chat_log_layout)
         # self.chat_log_frame.setWidget(self.chat_log)
+
+    def eventFilter(self, obj, event):
+        if event.type() == QEvent.Type.KeyPress and obj is self.chat_field:
+            if event.key() == Qt.Key.Key_Return and self.chat_field.hasFocus():
+                self.send_msg()
+                return True
+        return False
+
     
 
 class MessageEntry(QWidget):

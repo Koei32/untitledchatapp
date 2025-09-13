@@ -14,7 +14,7 @@ from PySide6.QtCore import Qt, QSize
 import pickle
 import socket
 from fonts import warning_font, default_font
-from util_functions import VALID_CHARS
+from util_functions import VALID_CHARS, VALID_USR_CHARS
 from config import ConfigManager
 
 cfgmgr = ConfigManager()
@@ -39,6 +39,9 @@ class LoginForm(QMainWindow):
             case 3:
                 self.set_and_show_info("Password contains invalid characters!", "orange")
                 return
+            case 4:
+                self.set_and_show_info("Screen Name contains special characters!", "orange")
+                return
         
         try:
             self.client.c = socket.socket()
@@ -62,7 +65,12 @@ class LoginForm(QMainWindow):
                     self.set_and_show_info("Successfully created account!", "green")
                     print("Successfully created account!")
                     self.client.user = self.username
-                    self.client.show_messenger_window("mito") #temp: should be buddy list
+
+                    self.client.c.send("GET_USERS".encode())
+                    user_list = self.client.c.recv(1024)
+                    self.client.user_list = pickle.loads(user_list)
+
+                    self.client.show_buddylist()
                     self.client.start_listener_thread()
         except ConnectionRefusedError or ConnectionAbortedError or TimeoutError:
             self.set_and_show_info("Could not connect to server.", "red")
@@ -77,6 +85,9 @@ class LoginForm(QMainWindow):
                 return
             case 3:
                 self.set_and_show_info("Password contains invalid characters!", "orange")
+                return
+            case 4:
+                self.set_and_show_info("Screen Name contains special characters!", "orange")
                 return
         
         try:
@@ -107,13 +118,12 @@ class LoginForm(QMainWindow):
                 else:
                     print("We have successfully logged into the server")
                     self.set_and_show_info("Logged in!", "green")
+                    self.client.user = self.username
                     
                     self.client.c.send("GET_USERS".encode())
                     user_list = self.client.c.recv(1024)
                     self.client.user_list = pickle.loads(user_list)
-                    print(self.client.user_list)
-                    # we're logged in at this point, we need to show the buddy list (coming soon)
-                    self.client.user = self.username
+                    
                     # self.client.show_messenger_window("mito") #temp: should be buddy list
                     self.client.show_buddylist()
                     self.client.start_listener_thread()
@@ -127,6 +137,9 @@ class LoginForm(QMainWindow):
         if len(self.password) < 4:
             self.set_ui_interactable(False)
             return 2
+        for chr in self.username:
+            if chr not in VALID_USR_CHARS:
+                return 4
         for chr in self.password:
             if chr not in VALID_CHARS:
                 self.set_ui_interactable(False)

@@ -5,7 +5,7 @@ import sqlite3
 from util_functions import parse_msg
 from logger import log, warn, error, success, message
 
-HOST = "koei.hackclub.app"
+HOST = "localhost"
 PORT = 14169
 
 
