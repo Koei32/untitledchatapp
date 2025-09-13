@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QSizePolicy,
     QLayout,
+    QFrame,
     QTreeWidgetItem,
     QMainWindow,
 )
@@ -31,26 +32,30 @@ class BuddyList(QMainWindow):
     
     def init_ui(self):
         self.setWindowTitle(f"{self.client.user}'s Buddy List")
-        self.setFixedSize(180, 400)
-        self.setMaximumSize(180, 400)
+        self.setFixedSize(200, 400)
+        self.setMaximumSize(200, 400)
         self.setContentsMargins(0, 0, 0, 0)
 
 
         wrapper = QWidget()
         wrapper_layout = QVBoxLayout()
-        wrapper_layout.setContentsMargins(0, 0, 0, 0)
-        wrapper_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        wrapper_layout.setContentsMargins(5, 5, 5, 5)
         wrapper.setLayout(wrapper_layout)
 
 
         # HERO IMAGE
         hero_image = QLabel()
         hero = QPixmap("./images/hero.png").scaled(
-            90, 200, Qt.AspectRatioMode.KeepAspectRatio
+            100, 100, Qt.AspectRatioMode.KeepAspectRatio
         )
         hero_image.setPixmap(hero)
+        hero_image.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         wrapper_layout.addWidget(hero_image)
 
+        separator = QFrame()
+        separator.setFrameShape(QFrame.Shape.HLine)
+        separator.setFrameShadow(QFrame.Shadow.Sunken)
+        wrapper_layout.addWidget(separator)
 
         # ONLINE LIST
         online_list_wrapper = QWidget()
@@ -69,5 +74,7 @@ class BuddyList(QMainWindow):
         self.setCentralWidget(wrapper)
     
     def open_msg_window(self, listitem):
+        if listitem.text(0) == "Buddies":
+            return
         self.client.show_messenger_window(listitem.text(0))
 
