@@ -11,12 +11,13 @@ from PySide6.QtWidgets import (
     QListWidget,
     QSizePolicy,
     QScrollArea,
-    QFrame
+    QFrame,
 )
 from config import ConfigManager
 from PySide6.QtCore import Qt, QEvent
 
 cfgmgr = ConfigManager()
+
 
 class MessengerWindow(QMainWindow):
     def __init__(self, client, receiver: str):
@@ -26,7 +27,7 @@ class MessengerWindow(QMainWindow):
         self.receiver = receiver
 
         self.init_ui()
-      
+
     def send_msg(self):
         if len(self.chat_field.toPlainText().strip()) == 0:
             return
@@ -35,7 +36,7 @@ class MessengerWindow(QMainWindow):
         self.client.c.send(message.encode())
         self.add_message_entry(self.user, self.chat_field.toPlainText())
         self.chat_field.clear()
-    
+
     def init_ui(self):
         self.setWindowTitle(self.receiver)
         self.setFixedSize(600, 350)
@@ -58,7 +59,6 @@ class MessengerWindow(QMainWindow):
         self.chat_controls_layout.addWidget(send_btn)
         self.chat_controls.setLayout(self.chat_controls_layout)
 
-
         self.wrapper_layout = QVBoxLayout()
         self.wrapper_layout.addWidget(self.chat_log_frame)
         self.wrapper_layout.addWidget(self.chat_controls)
@@ -67,14 +67,18 @@ class MessengerWindow(QMainWindow):
 
     def closeEvent(self, event: QCloseEvent) -> None:
         self.client.msg_windows.pop(self.receiver)
-    
+
     def add_message_entry(self, sender: str, content: str):
         user_msg_style = "color: red; font-family: 'Times New Roman'"
         msg_style = "color: blue; font-family: 'Times New Roman'"
         if sender == self.client.user:
-            self.chat_log_frame.append(f'<b style="{user_msg_style}">{sender}</b>: {content}')
+            self.chat_log_frame.append(
+                f'<b style="{user_msg_style}">{sender}</b>: {content}'
+            )
         else:
-            self.chat_log_frame.append(f'<b style="{msg_style}">{sender}</b>: {content}')
+            self.chat_log_frame.append(
+                f'<b style="{msg_style}">{sender}</b>: {content}'
+            )
         # self.chat_log.setLayout(self.chat_log_layout)
         # self.chat_log_frame.setWidget(self.chat_log)
 
@@ -85,7 +89,6 @@ class MessengerWindow(QMainWindow):
                 return True
         return False
 
-    
 
 class MessageEntry(QWidget):
     def __init__(self, user, message, time):
@@ -98,4 +101,3 @@ class MessageEntry(QWidget):
         layout.addWidget(message_text)
         self.setLayout(layout)
         self.setFixedHeight(12)
-

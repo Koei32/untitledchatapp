@@ -131,7 +131,6 @@ def forward_message(msg: bytes):
         error(f"error: {receiver} is away")
 
 
-
 def receive():
     success(f"Server is listening on {HOST}:{PORT}")
     while True:

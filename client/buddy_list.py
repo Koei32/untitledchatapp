@@ -23,25 +23,22 @@ from util_functions import VALID_CHARS
 from config import ConfigManager
 
 
-
 class BuddyList(QMainWindow):
     def __init__(self, client):
         super().__init__()
         self.client = client
         self.init_ui()
-    
+
     def init_ui(self):
         self.setWindowTitle(f"{self.client.user}'s Buddy List")
         self.setFixedSize(200, 400)
         self.setMaximumSize(200, 400)
         self.setContentsMargins(0, 0, 0, 0)
 
-
         wrapper = QWidget()
         wrapper_layout = QVBoxLayout()
         wrapper_layout.setContentsMargins(5, 5, 5, 5)
         wrapper.setLayout(wrapper_layout)
-
 
         # HERO IMAGE
         hero_image = QLabel()
@@ -72,9 +69,8 @@ class BuddyList(QMainWindow):
         online_list_wrapper_layout.addWidget(online_list)
         wrapper_layout.addWidget(online_list_wrapper)
         self.setCentralWidget(wrapper)
-    
+
     def open_msg_window(self, listitem):
         if listitem.text(0) == "Buddies":
             return
         self.client.show_messenger_window(listitem.text(0))
-

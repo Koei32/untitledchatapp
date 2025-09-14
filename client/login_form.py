@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QSizePolicy,
     QMainWindow,
-    QFrame
+    QFrame,
 )
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt, QSize
@@ -34,15 +34,21 @@ class LoginForm(QMainWindow):
                 self.set_and_show_info("Screen Name cannot be empty!", "orange")
                 return
             case 2:
-                self.set_and_show_info("Password must be atleast 8 characters!", "orange")
+                self.set_and_show_info(
+                    "Password must be atleast 8 characters!", "orange"
+                )
                 return
             case 3:
-                self.set_and_show_info("Password contains invalid characters!", "orange")
+                self.set_and_show_info(
+                    "Password contains invalid characters!", "orange"
+                )
                 return
             case 4:
-                self.set_and_show_info("Screen Name contains special characters!", "orange")
+                self.set_and_show_info(
+                    "Screen Name contains special characters!", "orange"
+                )
                 return
-        
+
         try:
             self.client.c = socket.socket()
             self.client.c.connect((host, port))
@@ -81,15 +87,21 @@ class LoginForm(QMainWindow):
                 self.set_and_show_info("Screen Name cannot be empty!", "orange")
                 return
             case 2:
-                self.set_and_show_info("Password must be atleast 8 characters!", "orange")
+                self.set_and_show_info(
+                    "Password must be atleast 8 characters!", "orange"
+                )
                 return
             case 3:
-                self.set_and_show_info("Password contains invalid characters!", "orange")
+                self.set_and_show_info(
+                    "Password contains invalid characters!", "orange"
+                )
                 return
             case 4:
-                self.set_and_show_info("Screen Name contains special characters!", "orange")
+                self.set_and_show_info(
+                    "Screen Name contains special characters!", "orange"
+                )
                 return
-        
+
         try:
             self.client.c = socket.socket()
             self.client.c.connect((host, port))
@@ -119,11 +131,11 @@ class LoginForm(QMainWindow):
                     print("We have successfully logged into the server")
                     self.set_and_show_info("Logged in!", "green")
                     self.client.user = self.username
-                    
+
                     self.client.c.send("GET_USERS".encode())
                     user_list = self.client.c.recv(1024)
                     self.client.user_list = pickle.loads(user_list)
-                    
+
                     # self.client.show_messenger_window("mito") #temp: should be buddy list
                     self.client.show_buddylist()
                     self.client.start_listener_thread()
@@ -154,7 +166,7 @@ class LoginForm(QMainWindow):
         if self.username == "kill":
             self.client.c.close()
         self.check_cred_validity()
-    
+
     def set_and_show_info(self, message: str, color: str):
         self.invalid_creds.setText(message)
         self.invalid_creds.setStyleSheet(f"color: {color}")
@@ -173,7 +185,7 @@ class LoginForm(QMainWindow):
             180, 200, Qt.AspectRatioMode.KeepAspectRatio
         )
         self.hero_image.setPixmap(hero)
-        self.setContentsMargins(0,0,0,0)
+        self.setContentsMargins(0, 0, 0, 0)
 
         # SEPARATOR
         separator = QFrame()
@@ -196,7 +208,6 @@ class LoginForm(QMainWindow):
         self.user_field.textChanged.connect(self.set_creds)
         self.username = self.user_field.text()
 
-        
         # PASSWORD FIELD
         self.pass_label = QLabel("Password")
         self.pass_label.setFont(default_font)
@@ -209,7 +220,6 @@ class LoginForm(QMainWindow):
         )
         self.pass_field.textChanged.connect(self.set_creds)
         self.password = self.pass_field.text()
-
 
         # GENERATING H LAYOUTS
         self.screen_name = QWidget()
@@ -260,7 +270,7 @@ class LoginForm(QMainWindow):
         fields_layout.addSpacing(5)
         fields_layout.addWidget(self.invalid_creds)
         fields_layout.addStretch(1)
-        fields_layout.setContentsMargins(0,0,0,0)
+        fields_layout.setContentsMargins(0, 0, 0, 0)
 
         buttons = QWidget()
         buttons_layout = QHBoxLayout()
@@ -278,8 +288,3 @@ class LoginForm(QMainWindow):
         wrapper = QWidget()
         wrapper.setLayout(layout)
         self.setCentralWidget(wrapper)
-
-
-    
-
-  

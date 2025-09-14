@@ -21,8 +21,9 @@ from buddy_list import BuddyList
 #
 
 
-class Client():
+class Client:
     signal_start_msg_listener = Signal(str)
+
     def __init__(self, client: socket.socket):
         self.c = client
         self.user = None
@@ -36,7 +37,7 @@ class Client():
         self.msg_listener = MessageListener(self)
         self.msg_listener_thread = QtCore.QThread()
         self.msg_listener.moveToThread(self.msg_listener_thread)
-        
+
         self.msg_mgr.signal_start_listener.connect(self.msg_listener.listen)
         self.msg_mgr.signal_message_received.connect(self.on_received_message)
 
@@ -71,7 +72,9 @@ class Client():
         self.msg_listener_thread.start()
         self.msg_mgr.signal_start_listener.emit()
 
+
 # qthread implementation
+
 
 class MessageListener(QObject):
 
@@ -89,13 +92,16 @@ class MessageListener(QObject):
                     message = self.client.c.recv(1024)
                     sender, receiver, content = parse_msg(message)
                     print(f"{sender}: {content}")
-                    self.msg_manager.signal_message_received.emit((sender, receiver, content))
+                    self.msg_manager.signal_message_received.emit(
+                        (sender, receiver, content)
+                    )
             except Exception as e:
                 print(e)
+
 
 class MessageManager(QObject):
     signal_message_received = Signal(tuple)
     signal_start_listener = Signal()
+
     def __init__(self):
         super().__init__()
-
