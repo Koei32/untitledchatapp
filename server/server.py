@@ -143,4 +143,7 @@ KNOWN_WORDS = {
     "GET_USERS": send_user_list,
 }
 
-receive()
+try:
+    receive()
+except Exception as e:
+    error(e)
