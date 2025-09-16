@@ -1,24 +1,19 @@
+import os
 from PySide6.QtWidgets import QApplication, QStyleFactory
-from PySide6.QtGui import QFont, QPalette, QColor
 from PySide6.QtCore import QObject, Signal
+from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
 from PySide6 import QtCore
+from PySide6.QtCore import QUrl
 import sys
 import socket
-import threading
 from util_functions import parse_msg
 from fonts import main_pallete
+
 
 from config import ConfigManager
 from login_form import LoginForm
 from messenger import MessengerWindow
 from buddy_list import BuddyList
-
-#
-#
-# TODO: CHECK PASSWORD VALIDITY
-# TODO: STORE HASHED PASSWORDS and CHECK WITH HASH (salt and all)
-#
-#
 
 
 class Client:
@@ -30,6 +25,7 @@ class Client:
         self.user_list = []
         cfg_mgr = ConfigManager()
 
+        self._active_players = []
         self.msg_mgr = MessageManager()
 
         self.msg_windows = {}
@@ -66,11 +62,38 @@ class Client:
     @QtCore.Slot()
     def on_received_message(self, data: tuple):
         print(f"{data[0]} is sending you '{data[2]}'")
+        self.play_sound("./sounds/imrcv.wav")
         self.msg_windows[data[0]].add_message_entry(data[0], data[2])
 
     def start_listener_thread(self):
         self.msg_listener_thread.start()
         self.msg_mgr.signal_start_listener.emit()
+    
+    def play_sound(self, path: str, volume: float = 1.0):
+        abs_path = os.path.abspath(path)
+        url = QUrl.fromLocalFile(abs_path)
+
+        audio_output = QAudioOutput()
+        audio_output.setVolume(volume)
+
+        player = QMediaPlayer()
+        player.setAudioOutput(audio_output)
+        player.setSource(url)
+
+        self._active_players.append((player, audio_output))
+
+        def cleanup():
+            for pair in list(self._active_players):
+                if pair[0] is player:
+                    self._active_players.remove(pair)
+
+        player.mediaStatusChanged.connect(
+            lambda status: cleanup() if status == QMediaPlayer.MediaStatus.EndOfMedia else None
+        )
+
+        player.play()
+
+
 
 
 # qthread implementation
@@ -105,3 +128,4 @@ class MessageManager(QObject):
 
     def __init__(self):
         super().__init__()
+

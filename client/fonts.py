@@ -24,7 +24,7 @@ def main_pallete():
     pal.setColor(QPalette.ColorRole.ButtonText, QColor(0, 0, 0))  # Button text
 
     # 3D effect shades
-    pal.setColor(QPalette.ColorRole.Light, QColor(244, 244, 244))  # Top/left highlight
+    pal.setColor(QPalette.ColorRole.Light, QColor(236, 236, 236))  # Top/left highlight
     pal.setColor(QPalette.ColorRole.Midlight, QColor(232, 232, 232))  # Mid highlight
     pal.setColor(QPalette.ColorRole.Mid, QColor(168, 168, 168))  # Middle shadow
     pal.setColor(QPalette.ColorRole.Dark, QColor(177, 177, 177))  # Deep shadow

@@ -1,32 +1,22 @@
 from PySide6.QtWidgets import (
     QWidget,
-    QPushButton,
-    QLineEdit,
     QVBoxLayout,
-    QHBoxLayout,
-    QListView,
     QStackedLayout,
     QTreeWidget,
     QLabel,
-    QSizePolicy,
-    QLayout,
     QFrame,
     QTreeWidgetItem,
     QMainWindow,
 )
 from PySide6.QtGui import QPixmap
-from PySide6.QtCore import Qt, QSize
-import pickle
-import socket
-from fonts import warning_font, default_font
-from util_functions import VALID_CHARS
-from config import ConfigManager
+from PySide6.QtCore import Qt
 
 
 class BuddyList(QMainWindow):
     def __init__(self, client):
         super().__init__()
         self.client = client
+        self.client.play_sound("./sounds/buddyin.wav")
         self.init_ui()
 
     def init_ui(self):
@@ -61,12 +51,13 @@ class BuddyList(QMainWindow):
         online_list = QTreeWidget()
         online_list.setHeaderHidden(True)
         buddies = QTreeWidgetItem(online_list, ["Buddies"])
+        buddies.setExpanded(True)
         for user in self.client.user_list:
             x = QTreeWidgetItem(buddies, [user])
 
         online_list.itemDoubleClicked.connect(self.open_msg_window)
-
         online_list_wrapper_layout.addWidget(online_list)
+
         wrapper_layout.addWidget(online_list_wrapper)
         self.setCentralWidget(wrapper)
 
@@ -74,3 +65,5 @@ class BuddyList(QMainWindow):
         if listitem.text(0) == "Buddies":
             return
         self.client.show_messenger_window(listitem.text(0))
+    
+
