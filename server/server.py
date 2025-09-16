@@ -131,6 +131,10 @@ def forward_message(msg: bytes):
         error(f"error: {receiver} is away")
 
 
+def send_ping(c):
+    c.send("UP")
+
+
 def receive():
     success(f"Server is listening on {HOST}:{PORT}")
     while True:
@@ -141,6 +145,7 @@ def receive():
 
 KNOWN_WORDS = {
     "GET_USERS": send_user_list,
+    "STATUS": send_ping,
 }
 
 try:

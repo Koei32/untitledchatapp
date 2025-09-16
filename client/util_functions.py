@@ -1,8 +1,8 @@
 import re
-from string import printable, ascii_letters
+from string import printable, ascii_letters, digits
 
 VALID_CHARS = printable[:-6]
-VALID_USR_CHARS = ascii_letters + "_"
+VALID_USR_CHARS = ascii_letters + "_" + digits
 
 
 # sender-receiver;message
