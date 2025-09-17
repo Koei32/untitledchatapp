@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (
     QMainWindow,
     QFrame,
 )
-from PySide6.QtGui import QPixmap
+from PySide6.QtGui import QPixmap, QIcon
 from PySide6.QtCore import Qt, QSize
 import pickle
 import socket
@@ -178,10 +178,11 @@ class LoginForm(QMainWindow):
 
     def init_ui(self):
         self.setWindowTitle("Sign On")
+        self.setWindowIcon(QIcon(cfgmgr.img_path + "aim.ico"))
         self.setFixedSize(200, 300)
         # SPLASH IMAGE
         self.hero_image = QLabel(self)
-        hero = QPixmap("./images/hero.png").scaled(
+        hero = QPixmap(cfgmgr.img_path + "hero.png").scaled(
             180, 200, Qt.AspectRatioMode.KeepAspectRatio
         )
         self.hero_image.setPixmap(hero)
@@ -242,7 +243,7 @@ class LoginForm(QMainWindow):
 
         # LOGIN BUTTON
         self.login_button = QPushButton()
-        sign_on = QPixmap("./images/signon.png")
+        sign_on = QPixmap(cfgmgr.img_path + "signon.png")
         self.login_button.setFixedSize(48, 38)
         self.login_button.setFlat(True)
         self.login_button.clicked.connect(self.send_login_msg)
@@ -250,7 +251,6 @@ class LoginForm(QMainWindow):
         self.login_button.setIconSize(QSize(48, 38))
 
         # REGISTER BUTTON
-        # sign_on = QPixmap("./images/sign_on.png").scaled(50, 50, Qt.AspectRatioMode.KeepAspectRatio)
         self.register_button = QPushButton("Register")
         self.register_button.setFixedWidth(50)
         self.register_button.setFixedHeight(50)

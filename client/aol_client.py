@@ -16,6 +16,8 @@ from messenger import MessengerWindow
 from buddy_list import BuddyList
 
 
+cfg_mgr = ConfigManager()
+
 class Client:
     signal_start_msg_listener = Signal(str)
 
@@ -23,7 +25,6 @@ class Client:
         self.c = client
         self.user = None
         self.user_list = []
-        cfg_mgr = ConfigManager()
 
         self._active_players = []
         self.msg_mgr = MessageManager()
@@ -62,7 +63,7 @@ class Client:
     @QtCore.Slot()
     def on_received_message(self, data: tuple):
         print(f"{data[0]} is sending you '{data[2]}'")
-        self.play_sound("./sounds/imrcv.wav")
+        self.play_sound(cfg_mgr.sounds_path + "imrcv.wav")
         self.msg_windows[data[0]].add_message_entry(data[0], data[2])
 
     def start_listener_thread(self):

@@ -10,14 +10,9 @@ from PySide6.QtWidgets import (
 )
 from config import ConfigManager
 from PySide6.QtCore import Qt, QEvent, QSize
-from PySide6.QtGui import QPixmap
+from PySide6.QtGui import QPixmap, QIcon
 
 cfgmgr = ConfigManager()
-
-# device = QAudioDevice()
-# imrcv.setAudioDevice(device)
-# imsend = QSoundEffect(cfgmgr.sounds_path + "imsend.wav")
-
 
 
 class MessengerWindow(QMainWindow):
@@ -35,11 +30,12 @@ class MessengerWindow(QMainWindow):
         message = header + self.chat_field.toPlainText()
         self.client.c.send(message.encode())
         self.add_message_entry(self.user, self.chat_field.toPlainText())
-        self.client.play_sound("./sounds/imsend.wav")
+        self.client.play_sound(cfgmgr.sounds_path + "imsend.wav")
         self.chat_field.clear()
 
     def init_ui(self):
         self.setWindowTitle(f"{self.receiver} - Instant Message")
+        self.setWindowIcon(QIcon(cfgmgr.img_path + "im.ico"))
         self.setFixedSize(600, 350)
         self.wrapper = QWidget()
 
@@ -48,7 +44,6 @@ class MessengerWindow(QMainWindow):
         self.chat_log_frame.setReadOnly(True)
         self.chat_log_frame.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.chat_log_frame.setStyleSheet("font-size: 12pt; font-family: 'Times New Roman'")
-        # self.chat_log_frame.setStyleSheet("font-family: 'Times New Roman'")
 
         self.chat_log_frame.resize(600, 300)
 
@@ -69,10 +64,10 @@ class MessengerWindow(QMainWindow):
         exit_btn = QPushButton("Exit")
         exit_btn.clicked.connect(self.close)
         send_btn = QPushButton()
-        exit = QPixmap("./images/send.png")
+        exit = QPixmap(cfgmgr.img_path + "send.png")
         send_btn.setFixedSize(48, 40)
         send_btn.setIcon(exit)
-        send_btn.setIconSize(QSize(60, 50))
+        send_btn.setIconSize(QSize(48, 40))
         buttons_layout.addWidget(exit_btn)
         buttons_layout.addStretch()
         buttons_layout.addWidget(send_btn)
@@ -96,19 +91,16 @@ class MessengerWindow(QMainWindow):
         self.client.msg_windows.pop(self.receiver)
 
     def add_message_entry(self, sender: str, content: str):
-        
         user_msg_style = "color: red; font-family: 'Times New Roman'"
         msg_style = "color: blue; font-family: 'Times New Roman'"
         if sender == self.client.user:
             self.chat_log_frame.append(
-                f'<b style="{user_msg_style}">{sender}</b>: {content}'
+                f'<b style="{user_msg_style}">{sender}:</b> {content}'
             )
         else:
             self.chat_log_frame.append(
-                f'<b style="{msg_style}">{sender}</b>: {content}'
+                f'<b style="{msg_style}">{sender}:</b> {content}'
             )
-        # self.chat_log.setLayout(self.chat_log_layout)
-        # self.chat_log_frame.setWidget(self.chat_log)
 
     def eventFilter(self, obj, event):
         if event.type() == QEvent.Type.KeyPress and obj is self.chat_field:

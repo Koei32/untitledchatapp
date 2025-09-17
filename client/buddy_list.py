@@ -8,19 +8,22 @@ from PySide6.QtWidgets import (
     QTreeWidgetItem,
     QMainWindow,
 )
-from PySide6.QtGui import QPixmap
+from PySide6.QtGui import QPixmap, QIcon
 from PySide6.QtCore import Qt
+from config import ConfigManager
 
+cfg_mgr = ConfigManager()
 
 class BuddyList(QMainWindow):
     def __init__(self, client):
         super().__init__()
         self.client = client
-        self.client.play_sound("./sounds/buddyin.wav")
+        self.client.play_sound(cfg_mgr.sounds_path + "buddyin.wav", 0.5)
         self.init_ui()
 
     def init_ui(self):
         self.setWindowTitle(f"{self.client.user}'s Buddy List")
+        self.setWindowIcon(QIcon(cfg_mgr.img_path + "buddylist.ico"))
         self.setFixedSize(200, 400)
         self.setMaximumSize(200, 400)
         self.setContentsMargins(0, 0, 0, 0)
@@ -32,7 +35,7 @@ class BuddyList(QMainWindow):
 
         # HERO IMAGE
         hero_image = QLabel()
-        hero = QPixmap("./images/hero.png").scaled(
+        hero = QPixmap(cfg_mgr.img_path + "hero.png").scaled(
             100, 100, Qt.AspectRatioMode.KeepAspectRatio
         )
         hero_image.setPixmap(hero)
