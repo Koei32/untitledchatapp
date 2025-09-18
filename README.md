@@ -41,9 +41,11 @@ Thanks to
 <br>
 <details>
   <summary>TODO</summary>
-    - Message buffering
-    - Adding Buddies
-    - Buddy icons
-    - Away messages
-    - End-to-end encryption (!)
+  <ul>
+  <li>Message buffering</li>
+  <li>Adding Buddies </li>
+  <li>Buddy icons </li>
+  <li>Away messages </li>
+  <li>End-to-end encryption (!) </li>
+  <ul>
 </details>
