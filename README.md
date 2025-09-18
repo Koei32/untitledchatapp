@@ -29,3 +29,20 @@ Double click your Buddy's Screen Name in the Buddy List and start chatting.
 
 ## End
 This project was made for submission to Hack Club's **Summer of Making 2025** ([link](https://summer.hackclub.com/projects/2529)). I mostly wanted to make this because I wanted to learn more about making GUIs in python and also socket communication. I originally planned end-to-end encryption for this app as well but I am most definitely not going to make the deadline (perhaps in the future?). If you find any issues, please make an issue. Thanks for viewing. \o
+
+
+### Credits
+Thanks to
+- My friend Mito, for helping out with QA and finding a lot of bugs and making suggestions.
+- BnaJns on the Hack Club Slack, for testing out the app.
+- Other kind strangers on StackOverflow.
+
+
+<br>
+<details>
+  <summary>TODO</summary>
+    - Message buffering
+    - Adding Buddies
+    - Buddy icons
+    - Away messages
+</details>
