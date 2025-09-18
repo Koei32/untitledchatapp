@@ -160,11 +160,8 @@ class LoginForm(QMainWindow):
         return 0
 
     def set_creds(self):
-        # self.invalid_creds.setVisible(False)
         self.password = self.pass_field.text()
         self.username = self.user_field.text()
-        if self.username == "kill":
-            self.client.c.close()
         self.check_cred_validity()
 
     def set_and_show_info(self, message: str, color: str):

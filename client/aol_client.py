@@ -63,7 +63,6 @@ class Client:
     @QtCore.Slot()
     def on_received_message(self, data: tuple):
         print(f"{data[0]} is sending you '{data[2]}'")
-        self.play_sound(cfg_mgr.sounds_path + "imrcv.wav")
         self.msg_windows[data[0]].add_message_entry(data[0], data[2])
 
     def start_listener_thread(self):
@@ -115,6 +114,7 @@ class MessageListener(QObject):
                 while True:
                     message = self.client.c.recv(1024)
                     sender, receiver, content = parse_msg(message)
+                    self.client.play_sound(cfg_mgr.sounds_path + "imrcv.wav")
                     print(f"{sender}: {content}")
                     self.msg_manager.signal_message_received.emit(
                         (sender, receiver, content)
