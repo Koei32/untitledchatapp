@@ -45,4 +45,5 @@ Thanks to
     - Adding Buddies
     - Buddy icons
     - Away messages
+    - End-to-end encryption (!)
 </details>
